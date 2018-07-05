@@ -15,15 +15,26 @@ public class Shooter : GeneralObject {
             myWeapon.StopShooting(delay);
         }
     }
+    [Header("Weapon Info")]
     public List<WeaponList> weaponList;
 
     //Basic info
-    public Transform myTarget;
-    public Vector2 targetVector;
+    [HideInInspector] public Transform myTarget;
+    [HideInInspector] public Vector2 targetVector;
 
-    protected override void Awake()
+	#region Default
+	protected override void Awake()
     {
-        if (weaponList.Count > 0) {
+        base.Awake();
+
+        bool allInactive = true;
+        foreach (WeaponList weapon in weaponList) {
+            if (weapon.isActive == true) {
+                allInactive = false;
+                break;
+            }
+        }
+        if (weaponList.Count > 0 && allInactive == true) {
             weaponList[0].isActive = true;
         }
 
@@ -34,16 +45,62 @@ public class Shooter : GeneralObject {
         }
         UpdateTarget(targetVector);
     }
+	#endregion
 
-    //Actions
-    public void Shoot(int indx = -1, int delay = 0)
+	#region Action
+	public virtual bool Shoot(Vector2 target, int indx = -1, int delay = 0)
     {
-        if (indx == -1) {
-            foreach(WeaponList weaponElement in weaponList) {
-                if (weaponElement.isActive == true) {
+        if (indx != -1 && weaponList[indx].isActive == false) {
+            return false;
+        }
 
-                    weaponElement.myWeapon.StartShooting(delay);
+        if (indx == -1) {
+            //Shoot all
+            bool didShoot = false;
+            foreach (WeaponList weapon in weaponList) {
+                Weapon curGun = weapon.myWeapon;
+                if (canAttack == true && curGun != null) {
+                    bool temp = curGun.StartShooting(target, 0);
+                    didShoot = temp == true ? temp : false;
                 }
+            }
+            return didShoot;
+        } else {
+            //Shoot only the specified gun
+            Weapon curGun = weaponList[indx].myWeapon;
+            if (canAttack == true && curGun != null) {
+                return curGun.StartShooting(target, 0);
+            }
+        }
+        return false;
+    }   //Fire a weapon
+    public  void StopShooting(int indx = -1, int delay = 0)      //Stop shooting
+    {
+        if (indx > -1) {
+            weaponList[indx].StopShooting(delay);
+        } else {
+            foreach (WeaponList weapon in weaponList) {
+                weapon.StopShooting(delay);
+            }
+        }
+    }
+    public void SetActive(int indx = -1) //Set active a weapon
+    {
+        if(indx > -1) {
+            weaponList[indx].isActive = true;
+        } else {
+            foreach(WeaponList weapon in weaponList) {
+                weapon.isActive = true;
+            }
+        }
+    }
+    public void SetInactive(int indx = -1)      //Deactivate a weapon
+    {
+        if (indx > -1) {
+            weaponList[indx].isActive = false;
+        } else {
+            foreach (WeaponList weapon in weaponList) {
+                weapon.isActive = false;
             }
         }
     }
@@ -53,5 +110,15 @@ public class Shooter : GeneralObject {
             weaponElement.myWeapon.UpdateTarget(newTarget);
         }
     }
-
+    public void SetAutoShoot(bool target = true, int indx = -1)
+    {
+        if (indx == -1) {
+            foreach (WeaponList weapon in weaponList) {
+                weapon.myWeapon.autoShoot = target;
+            }
+        } else {
+            weaponList[indx].myWeapon.autoShoot = target;
+        }
+    }
+	#endregion
 }
