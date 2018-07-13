@@ -43,7 +43,7 @@ public class Projectile : GeneralObject {
 
         if (((tag == "Ally" || tag == "Player") && (collision.transform.tag == "Enemy")) ||
             ((collision.transform.tag == "Ally" || collision.transform.tag == "Player") && (tag == "Enemy"))) {
-            if (otherScript.isInvicible == false) {
+            if (otherScript.isInvincible == false) {
                 otherScript.ChangeHealth(-myDamage);
             }
         }

@@ -12,7 +12,7 @@ public class Weapon : MonoBehaviour {
     public bool ableToShoot = false;
         //Bullet
     [System.Serializable]
-    public class Bullet
+    public class BulletInfo
     {
         [Header("Gun relating info")]
         public float fireRate = 5;          //Bullet per second: 1/fireRate = reloadTime
@@ -21,6 +21,7 @@ public class Weapon : MonoBehaviour {
         public float waitAfterWave = 0.5f;
         public int numberOfWave = 1;
         public int bulletBeforeWait = -1;
+		public bool canBeUsed = true;
         [Header("Bullet relating info")]
         public float bulletSpeed = -1;
         public float damage = 10;
@@ -37,23 +38,22 @@ public class Weapon : MonoBehaviour {
         public Transform bullet;
     }
     [Header("Bullet List")]
-    public List<Bullet> bulletList;
-	protected Bullet curBullet;
-    //protected int curIndx = 0;
+    public List<BulletInfo> bulletList;
+	protected BulletInfo curBullet;
         //Weapon itself
     public bool autoShoot = false;
-    public float rageCost = 0;
-    private Coroutine shooting;
+    protected float rageCost = 0;
+    protected Coroutine shooting;
     public Transform myTarget;
     protected Vector2 targetVector;
     protected Vector2 gunToNozzle;
     protected Vector2 curAutoShoot;
 
     //Collector
-    private Collector bulletMaster;
+    protected Collector bulletMaster;
 
 	#region Default
-	private void Awake()
+	public virtual void Awake()
     {
         bulletMaster = GameObject.Find("Bullet_Collector").GetComponent<Collector>();
 
@@ -76,11 +76,16 @@ public class Weapon : MonoBehaviour {
 	//Shooting
 	public virtual void FireBullet(Vector2 target)
     {
-        if (target == Vector2.zero) {
-            target = gunToNozzle;
-        }
-        //Launch == 0: Just fire, constant velocity
-        //Pulse  == 1: Push bullet out
+		if (curBullet.canBeUsed == false) {
+			return;
+		}
+
+		if (target == Vector2.zero) {
+			target = gunToNozzle;
+		}
+		//Launch == 0: Just fire, constant velocity
+		//Pulse  == 1: Push bullet out
+
         Transform bullet = Instantiate(curBullet.bullet, transform.position, Quaternion.identity);
         Projectile script = bullet.GetComponent<Projectile>();
         script.tag = tag;
@@ -103,7 +108,7 @@ public class Weapon : MonoBehaviour {
         if (curBullet.fasterMax > -1 && curBullet.fasterDuration > -1) {
             script.FasterThroughTime();
         }
-    }
+	}
     public virtual IEnumerator Shoot(Vector2 target)
     {
         for (int indx = 0; indx < curBullet.numberOfWave; indx++) {
@@ -180,24 +185,32 @@ public class Weapon : MonoBehaviour {
     {
         targetVector = newTarget;
     }
-    private IEnumerator UpdateTargetRoutine()
+    protected IEnumerator UpdateTargetRoutine()
     {
-        gunToNozzle = nozzle.position - transform.position;  //Update nozzle position
+		gunToNozzle = nozzle.position - transform.position;  //Update nozzle position
         UpdateTarget(myTarget);
         yield return new WaitForSeconds(Time.deltaTime);
         StartCoroutine(UpdateTargetRoutine());
     }
         //Bullet
-    public int NextBullet()
+    public virtual int NextBullet()
     {
 		int curIndx = bulletList.IndexOf(curBullet);
 		curIndx = curIndx >= bulletList.Count - 1? 0 : curIndx + 1;
 		curBullet = bulletList[curIndx];
+
+		if (curBullet.canBeUsed == false) {
+			return NextBullet();
+		}
 		return curIndx;
     }
-    public int NextBullet(int indx)
+    public virtual int NextBullet(int indx)
     {
 		curBullet = bulletList[Mathf.Min(indx, bulletList.Count - 1)];
+
+		if (curBullet.canBeUsed == false) {
+			return NextBullet(indx + 1);
+		}
         return  bulletList.IndexOf(curBullet);
     }
     public float GetCurRageCost()

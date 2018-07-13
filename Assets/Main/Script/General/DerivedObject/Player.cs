@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Player : Shooter {
 
-    //Basic info
-        //Rage
-    [Header("Basic stats")]
-    public float maxRage = 0;               
-    private float curRage;
+	//Basic info
+	//Rage
+	[Header("Basic stats")]
+	public float maxRage = 0;
+	public float curRage;
 	//Gun index
 	public const int singleMin = 0;
 	public const int singleMax = 2;
 	public const int multiGun = 3;
 	public const int ultiGun = 4;
-        //Misc
-    private float dataFragment = 0;
-	private float score = 0;
+	//Misc
+	[HideInInspector] public float dataFragment = 0;
+	[HideInInspector] public float score = 0 ;
     [Header("Status bars + Icons")]
     [SerializeField] private StatusIndicator myHealthSI;
     [SerializeField] private StatusIndicator myRageSI;
@@ -44,14 +44,16 @@ public class Player : Shooter {
     private void Start()
     {
         myShieldScript.SetActive(false);
+		myHealthSI.SetValue(curHealth, maxHealth);
+		myRageSI.SetValue(curRage, maxRage);
+		scoreSI.SetValue(score, 99999);
+		dataFragmentSI.SetValue(dataFragment, 99999);
     }
     protected void Update()
     {
         InputController();
 
         //Setting up the status indicator
-        myHealthSI.SetValue(curHealth, maxHealth);
-        myRageSI.SetValue(curRage, maxRage);
     }
     protected override void FixedUpdate()
     {
@@ -148,17 +150,19 @@ public class Player : Shooter {
                 bool didShoot = false;
                 for (int indx = singleMin; indx <= singleMax; indx++) {
                     bool temp = Shoot(Vector2.zero, indx);
-                    didShoot = temp == true ? temp : false;
+                    didShoot = temp == true ? temp : didShoot;
                 }
-                if (didShoot == true) {
-                    ChangeRage(-rageCost);
+				if (didShoot == true) {
+                    if (rageCost != 0) {
+						ChangeRage(-rageCost);
+					}
                 }
             }
         }
         if (Input.GetButton("MultiShot") == true) {
             float rageCost = GetRageCost(multiGun);   //Default rage cost
             if (curRage >= rageCost) {
-                if (Shoot(Vector2.zero, multiGun) == true) { 
+                if (Shoot(Vector2.zero, multiGun) == true && rageCost != 0) { 
                     ChangeRage(-rageCost);
                 }
             }
@@ -166,7 +170,7 @@ public class Player : Shooter {
         if (Input.GetButton("Ulti") == true) {
             float rageCost = GetRageCost(ultiGun);   //Default rage cost
             if (curRage >= rageCost) {
-                if (Shoot(Vector2.zero, ultiGun) == true) { 
+                if (Shoot(Vector2.zero, ultiGun) == true && rageCost != 0) { 
                     ChangeRage(-rageCost);
                 }
             }

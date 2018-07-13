@@ -14,9 +14,9 @@ public class GeneralObject : MonoBehaviour {
 	//Basic stats
 	[Header("Basic stats")]
 	public float maxHealth = 0;
-	protected float curHealth;
+	public float curHealth;
 	public float mySpeed = 0;
-	public bool isInvicible = false;
+	public bool isInvincible = false;
 	public float myDamage = 0;
 	public bool canAttack = false;
 	public float myScore = 10;
@@ -88,7 +88,7 @@ public class GeneralObject : MonoBehaviour {
 
 		if (((tag == "Ally" || tag == "Player") && (collision.transform.tag == "Enemy")) ||
 			((collision.transform.tag == "Ally" || collision.transform.tag == "Player") && (tag == "Enemy"))) {
-			if (otherScript.isInvicible == false) {
+			if (otherScript.isInvincible == false) {
 				otherScript.ChangeHealth(-myDamage);
 			}
 		}
@@ -164,7 +164,7 @@ public class GeneralObject : MonoBehaviour {
                 GeneralObject otherScript = collider.GetComponent<GeneralObject>();
                 if (((tag == "Ally" || tag == "Player") && (collider.tag == "enemy")) &&
                     ((collider.tag == "Ally" || collider.tag == "Player") && (tag == "enemy"))) {
-                    if (otherScript.isInvicible == false) {
+                    if (otherScript.isInvincible == false) {
                         otherScript.ChangeHealth(-myDamage * aoePercentage);
                     }
                 }
@@ -189,12 +189,12 @@ public class GeneralObject : MonoBehaviour {
 			}
 		}
 	}
-    public virtual void Launch(Vector2 target, float speed, int option = 0)
+    public virtual void Launch(Vector2 direction, float speed, int option = 0)
     {
-        myRb.velocity = target * speed;
+        myRb.velocity = direction.normalized * speed;
         if (option == 1) {
             //Rotate to velocity vector
-            StartCoroutine(RotateToVector(target));
+            StartCoroutine(RotateToVector(direction));
         }
     }
     public virtual IEnumerator RotateToVector(Vector2 target, float delay = 0)

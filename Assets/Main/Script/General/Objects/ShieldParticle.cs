@@ -21,7 +21,7 @@ public class ShieldParticle : MonoBehaviour {
         GeneralObject otherScript = collision.GetComponent<GeneralObject>();
         if ((((tag == "Ally" || tag == "Player") && (collision.tag == "Enemy")) ||
             ((collision.tag == "Ally" || collision.tag == "Player") && (tag == "Enemy")))) {
-            if (otherScript.isInvicible == false) {         //If the bullet is not invincible
+            if (otherScript.isInvincible == false) {         //If the bullet is not invincible
                 otherScript.ChangeHealth(-myDamage);        //Cause damage
                 CreateExplosion();                          //VFX
 

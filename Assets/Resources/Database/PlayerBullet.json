@@ -1,0 +1,75 @@
+[
+  {
+    "fireRate": 10,
+    "bulletPerWave": 1,
+    "waitDuringWave": 0,
+    "waitAfterWave": 0,
+    "numberOfWave": 1,
+    "bulletBeforeWait": 10,
+
+    "bulletSpeed": 80,
+    "damage": 30,
+
+    "rageCost": 0,
+    "rageReward": 1,
+
+    "lifeTime": -1,
+
+    "aoeRadius": 0,
+    "aoePercentage": 0,
+
+    "fasterMax": -1,
+    "fasterDuration": -1,
+
+    "canBeUsed": true
+  },
+  {
+    "fireRate": 3,
+    "bulletPerWave": 1,
+    "waitDuringWave": 0,
+    "waitAfterWave": 0,
+    "numberOfWave": 1,
+    "bulletBeforeWait": 10,
+
+    "bulletSpeed": 40,
+    "damage": 70,
+
+    "rageCost": 5,
+    "rageReward": 3,
+
+    "lifeTime": 1,
+
+    "aoeRadius": 4,
+    "aoePercentage": 60,
+
+    "fasterMax": 0,
+    "fasterDuration": 20,
+
+    "canBeUsed": true
+  },
+  {
+    "fireRate": 3,
+    "bulletPerWave": 2,
+    "waitDuringWave": 0.1,
+    "waitAfterWave": 0,
+    "numberOfWave": 1,
+    "bulletBeforeWait": 1,
+
+    "bulletSpeed": 40,
+    "damage": 45,
+
+    "rageCost": 15,
+    "rageReward": 10,
+
+    "lifeTime": -1,
+
+    "aoeRadius": 1.5,
+    "aoePercentage": 50,
+
+    "fasterMax": 80,
+    "fasterDuration": 2,
+
+    "canBeUsed": true
+  }
+
+]

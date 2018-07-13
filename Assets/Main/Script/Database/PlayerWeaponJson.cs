@@ -4,45 +4,37 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
 
-public class WeaponJson : MonoBehaviour {
+public class PlayerWeaponJson : JsonManager
+{
 
 	[Header("Json getter")]
-	private string path;
-	private string jsonString;
+	private string bulletPath;
+	private string weaponPath;
 
 	[Header("Member to get")]
-	private Player player;
 	private List<Bullet> bulletList;
+	private List<bool> weaponActiveList;
 
 	// Use this for initialization
 	#region Default
-	void Start () {
+	protected override void Awake () {
+		base.Awake();
+
 		//Set the path
-		path = "Assets/Resources/Database/PlayerWeapon.json";
+		bulletPath = "Assets/Resources/Database/PlayerBullet.json";
+		weaponPath = "Assets/Resources/Database/PlayerWeapon.json";
 
 		//Get the list from the database
-		bulletList = JsonConvert.DeserializeObject<List<Bullet>>(Resources.Load<TextAsset>("Database/PlayerWeapon").ToString());
-
-		//Get the player
-		player = StaticGlobal.GetPlayer().GetComponent<Player>();
-	}
-	private void FixedUpdate()
-	{
-		if (Input.GetKeyDown(KeyCode.L) == true) {
-			Debug.Log("Loaded!");
-			LoadToPlayer();
-		} else if (Input.GetKeyDown(KeyCode.U) == true) {
-			Debug.Log("Unloaded!");
-			WriteFromPlayer();
-		}
+		bulletList = JsonConvert.DeserializeObject<List<Bullet>>(Resources.Load<TextAsset>("Database/PlayerBullet").ToString());
+		weaponActiveList = JsonConvert.DeserializeObject<List<bool>>(Resources.Load<TextAsset>("Database/PlayerWeapon").ToString());
 	}
 	#endregion
 
 	#region Action
-	public void LoadToPlayer()
+	public override void Load()
 	{
 		for(int indx = Player.singleMin; indx <= Player.singleMax; indx++) {
-			List<Weapon.Bullet> curBulletList = player.weaponList[indx].myWeapon.bulletList;
+			List<Weapon.BulletInfo> curBulletList = player.weaponList[indx].myWeapon.bulletList;
 			for (int indx2 = 0; indx2 < curBulletList.Count; indx2++) {
 				curBulletList[indx2].fireRate = bulletList[indx2].fireRate;
 				curBulletList[indx2].bulletPerWave = bulletList[indx2].bulletPerWave;
@@ -60,12 +52,14 @@ public class WeaponJson : MonoBehaviour {
 				curBulletList[indx2].fasterMax = bulletList[indx2].fasterMax;
 				curBulletList[indx2].fasterDuration = bulletList[indx2].fasterDuration;
 			}
+
+			player.weaponList[indx].isActive = weaponActiveList[indx];
 		}
 	}
-	public void WriteFromPlayer()
+	public override void Save()
 	{
 		for (int indx = Player.singleMin; indx <= Player.singleMax; indx++) {
-			List<Weapon.Bullet> curBulletList = player.weaponList[indx].myWeapon.bulletList;
+			List<Weapon.BulletInfo> curBulletList = player.weaponList[indx].myWeapon.bulletList;
 			for (int indx2 = 0; indx2 < curBulletList.Count; indx2++) {
 				bulletList[indx2].fireRate = curBulletList[indx2].fireRate;
 				bulletList[indx2].bulletPerWave = curBulletList[indx2].bulletPerWave;
@@ -83,11 +77,18 @@ public class WeaponJson : MonoBehaviour {
 				bulletList[indx2].fasterMax = curBulletList[indx2].fasterMax;
 				bulletList[indx2].fasterDuration = curBulletList[indx2].fasterDuration;
 			}
+
+			weaponActiveList[indx] = player.weaponList[indx].isActive;
 		}
 
-		using (StreamWriter file = File.CreateText(path)) {
+		using (StreamWriter file = File.CreateText(bulletPath)) {
 			JsonSerializer serializer = new JsonSerializer();
 			serializer.Serialize(file, bulletList);
+		}
+
+		using (StreamWriter file = File.CreateText(weaponPath)) {
+			JsonSerializer serializer = new JsonSerializer();
+			serializer.Serialize(file, weaponActiveList);
 		}
 	}
 	#endregion

@@ -107,8 +107,10 @@ public class Shooter : GeneralObject {
     public void UpdateTarget(Vector2 newTarget)
     {
         foreach (WeaponList weaponElement in weaponList) {
-            weaponElement.myWeapon.UpdateTarget(newTarget);
-        }
+			if (weaponElement != null) { 
+				weaponElement.myWeapon.UpdateTarget(newTarget);
+			}
+		}
     }
     public void SetAutoShoot(bool target = true, int indx = -1)
     {

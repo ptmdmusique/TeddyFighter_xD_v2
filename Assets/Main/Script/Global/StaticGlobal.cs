@@ -10,29 +10,42 @@ public enum Tag
 }
 
 static class StaticGlobal {
-    //Player stuff
-    public static Transform GetPlayer()
+	#region Player
+	public static Transform GetPlayer()
     {
         return GameObject.Find("Player").transform;
     }
+	#endregion
 
-    //Map value from one range to another
-    static public float Map(float in_min, float in_max, float out_min, float out_max, float x)
+	#region Math
+	//Map value from one range to another
+	static public float Map(float in_min, float in_max, float out_min, float out_max, float x)
     {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
+	static public double Map(double x, double in_min, double in_max, double out_min, double out_max)
+	{
+		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	}
+	static public Vector3 RotateVectorByAmount_2D(float angle, Vector3 originalVector)
+	{
+		return Quaternion.Euler(0, 0, 
+			angle) * originalVector;
+	}
+	#endregion
 
-    //Mouse stuff
-    static public Vector3 GetMousePosition(Camera targetCamera)
+	#region Mouse
+	static public Vector3 GetMousePosition(Camera targetCamera)
     {
         Vector3 mouseOnScreen = targetCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
             Input.mousePosition.y,
             Input.mousePosition.z - targetCamera.transform.position.z));
         return mouseOnScreen;
     }
+	#endregion
 
-    //Camera stuff
-    static public float xScreenClamp = 0.8f;
+	#region Camera
+	static public float xScreenClamp = 0.8f;
     static public float yScreenClamp = 0.8f;
     static public float GetCameraHeight(Camera targetCamera)
     {
@@ -54,9 +67,10 @@ static class StaticGlobal {
     {
         return new Vector2(targetCamera.transform.position.y - GetCameraHeight(targetCamera) / 2, targetCamera.transform.position.x + GetCameraHeight(targetCamera) / 2);
     }
+	#endregion
 
-    //Misc
-    static public void ChangeIfNotEqual<T>(ref T other, T newValue, T constraint)   //Change the ref if newvalue != constraint
+	#region Action
+	static public void ChangeIfNotEqual<T>(ref T other, T newValue, T constraint)   //Change the ref if newvalue != constraint
     {
         if (newValue.Equals(constraint) == false) {
             other = newValue;
@@ -77,9 +91,5 @@ static class StaticGlobal {
 
         return false;
     }
-	static public double Map(double x, double in_min, double in_max, double out_min, double out_max)
-	{
-		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-	}
-
+	#endregion
 }
