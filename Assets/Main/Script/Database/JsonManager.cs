@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JsonManager {
+public class JsonManager: MonoBehaviour {
 	//Player
 	protected Player player;
 

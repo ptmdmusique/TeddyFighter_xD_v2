@@ -33,8 +33,9 @@ public class StatusIndicator : MonoBehaviour {
 	[Header("Shaking")]
 	public bool shakeWhenUpdated = true;
 	public Vector3 shakeStrength;
-	public float shakeTime = 1f;
-    
+	public float shakeTime = 0.1f;
+	private Tween shaking;
+
 	//Lerping stuff
 	private class LerpInfo
 	{
@@ -46,7 +47,6 @@ public class StatusIndicator : MonoBehaviour {
 		public float curVal;
 	}
 	private LerpInfo lerping;
-	private Tweener tween;
 
 	#region Default
 	private void Awake() {
@@ -71,38 +71,39 @@ public class StatusIndicator : MonoBehaviour {
 		lerping.maxVal = maxValue;
 
 		//Reset the tween
-		tween.Kill();
+		//DOTween.KillAll();
 
 		//Scale image
 		//healthBarRect.localScale = new Vector3(value, healthBarRect.localScale.y, healthBarRect.localScale.z);
 		
-		tween = DOTween.To(curVal => {
+		DOTween.To(curVal => {
 			//Fill the bar and text and other stuff!
 			if (statusText != null) {
 				statusText.text = Mathf.Round(curVal) + "/" + maxValue + " " + statusName;
 			}
 			if (statusImage != null) {
 				statusImage.fillAmount = curVal / lerping.maxVal;
-
-				//Color and alpha
-				if (mapAlpha == true) {
-					float newValue = inverseAlpha == false ?
-						StaticGlobal.Map(0, maxValue, 0, 1, curValue * alphaMultiplier) :
-						StaticGlobal.Map(0, maxValue, 0, 1, (maxValue - curValue) * alphaMultiplier);
-					DOTween.ToAlpha(() => statusImage.color, curAlpha => statusImage.color = curAlpha, newValue, lerping.timeTakenDuringLerp);
-				}
-				if (mapColor == true) {
-					Color newColor = Color.Lerp(minColor, maxColor, curValue / maxValue);
-					statusImage.DOColor(newColor, lerping.timeTakenDuringLerp);
-				}
 			}
-			
 			//Set the record
 			lerping.curVal = curVal;
 		}, lerping.curVal, lerping.curMaxVal, lerping.timeTakenDuringLerp);
 		
+		if (statusImage != null) {
+			//Color and alpha
+			if (mapAlpha == true) {
+				float newValue = inverseAlpha == false ?
+					StaticGlobal.Map(0, maxValue, 0, 1, curValue * alphaMultiplier) :
+					StaticGlobal.Map(0, maxValue, 0, 1, (maxValue - curValue) * alphaMultiplier);
+				DOTween.ToAlpha(() => statusImage.color, curAlpha => statusImage.color = curAlpha, newValue, lerping.timeTakenDuringLerp);
+			}
+			if (mapColor == true) {
+				Color newColor = Color.Lerp(minColor, maxColor, curValue / maxValue);
+				statusImage.DOColor(newColor, lerping.timeTakenDuringLerp);
+			}
+		}
+
 		//Do we shake?
-		if (shakeWhenUpdated == true) {
+		if (shakeWhenUpdated == true && shaking == null) {
 			//Scale the shake based on the percentage of curVal & maxVal
 			Shake(1 + curValue / maxValue);
 		}
@@ -121,7 +122,7 @@ public class StatusIndicator : MonoBehaviour {
     }
 	public void Shake(float scale = 1, float time = -1f)
 	{
-		transform.DOShakePosition(time == -1 ? shakeTime : time, shakeStrength * scale);
+		shaking = transform.DOShakePosition(time == -1 ? shakeTime : time, shakeStrength * scale).OnComplete(() => shaking = null);
 	}
     public void ChangeIcon() {
         if (tempIcon != null) {

@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class GeneralObject : MonoBehaviour {
 
 	[System.Serializable]
 	public class DropCollectible
 	{
+		public int numberOfSpawn = 1;
 		public float spawnChance = 0;
 		public Transform collectible;
 	}
@@ -33,6 +35,7 @@ public class GeneralObject : MonoBehaviour {
 	public float aoeRadius = 0;                 //Damage surrounding when die
 	public float aoePercentage = 0;
 	public List<DropCollectible> collectible;
+	public int collectibleOption = 0;
 
 	//Private info
 	protected Rigidbody2D myRb;
@@ -44,9 +47,9 @@ public class GeneralObject : MonoBehaviour {
 	protected Vector2 yScreen;
 
 	//Collector 
-	protected Collector vfxMaster;
-	protected Collector bulletMaster;
-	protected Collector objectMaster;
+	public Collector vfxMaster;
+	public Collector bulletMaster;
+	public Collector objectMaster;
 
 	#region Default
 	protected virtual void Awake()
@@ -149,7 +152,11 @@ public class GeneralObject : MonoBehaviour {
 
         myRb.velocity = dir * speed;
     }
-    public virtual void Attack(Transform target = null) { }         
+	public virtual void MoveToPosition(Vector3 target, float time, Ease easeType = Ease.Linear)
+	{
+		transform.DOMove(target, time).SetEase(easeType);
+	}
+	public virtual void Attack(Transform target = null) { }         
     public virtual void Attack(Vector3 target) { }                  
     public virtual void Die()
     {
@@ -170,7 +177,7 @@ public class GeneralObject : MonoBehaviour {
                 }
             }
         }
-		SpawnCollectible();
+		SpawnCollectible(collectibleOption);
 
 		Destroy(gameObject);
     }
@@ -185,7 +192,9 @@ public class GeneralObject : MonoBehaviour {
 			float chance = Random.Range(0, 100);
 			if (chance < child.spawnChance && ((spawned == false && option == 0) || option == 1)) {
 				spawned = true;
-				objectMaster.AddChild(Instantiate(child.collectible, transform.position, Quaternion.identity));
+				for (int indx = 0; indx < child.numberOfSpawn; indx++) {
+					objectMaster.AddChild(Instantiate(child.collectible, transform.position, Quaternion.identity));
+				}
 			}
 		}
 	}
@@ -214,6 +223,7 @@ public class GeneralObject : MonoBehaviour {
     {
         float temp = myDamage;
         myDamage = myDamage > reduceDamage ? myDamage - reduceDamage : 0;
+		Debug.Log(myDamage);
         if (resetTime <= -1) {
             //Reduce forever
             yield return null;
@@ -234,7 +244,7 @@ public class GeneralObject : MonoBehaviour {
     {
         yield return new WaitForSeconds(delay);
         myRb.velocity = Vector2.zero;
-    }
+    } 
     public virtual IEnumerator StopAttacking(float delay = 0) {
         yield return new WaitForSeconds(delay);
 
@@ -285,5 +295,15 @@ public class GeneralObject : MonoBehaviour {
             child.gameObject.layer = LayerMask.NameToLayer(newLayer);
         }
     }
+	#endregion
+
+	#region GetSet
+	public Collider2D GetCollider() {
+		return myCollider;
+	}
+	public Rigidbody2D GetRB()
+	{
+		return myRb;
+	}
 	#endregion
 }

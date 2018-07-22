@@ -1,18 +1,18 @@
 [
   {
-    "isActive": 1
+    "isActive": true
   },
   {
-    "isActive": 0
+    "isActive": false
   },
   {
-    "isActive": 0
+    "isActive": false
   },
   {
-    "isActive": 0
+    "isActive": false
   },
   {
-    "isActive": 0
+    "isActive": false
   }
 ]
 

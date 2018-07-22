@@ -76,9 +76,9 @@ public class Player : Shooter {
 		
 		if (collision.tag == "Collectible") {
 			if(collision.name.Contains("Data") == true) {
-				ChangeDataFragment(script.myValue);
+				ChangeDataFragment((int) Random.Range(script.minValue, script.maxValue));
 			} else if (collision.name.Contains("Health") == true) {
-				ChangeHealth(script.myValue);
+				ChangeHealth((int) Random.Range(script.minValue, script.maxValue));
 			}
 			script.Collected();
 		}

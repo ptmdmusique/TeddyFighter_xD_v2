@@ -5,7 +5,8 @@ using UnityEngine;
 public class Collectible : MonoBehaviour {
 
 	[Header("Info")]
-	public float myValue = 10;
+	public float minValue = 10;
+	public float maxValue = 10;
 	public List<Transform> explosionList;
 	private Collector vfxMaster;
 
