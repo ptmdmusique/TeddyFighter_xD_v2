@@ -39,7 +39,7 @@ public class TestSpawn : MonoBehaviour {
                 GeneralObject spawnObject = Instantiate(objectList[curIndx++], curLocation, Quaternion.identity).GetComponent<GeneralObject>();
                 curLocation.x += spawnLength;
                 spawnObject.SetTag(spawnTag == Tag.Ally ? "Ally" : "Enemy");
-                spawnObject.SetLayer(spawnTag == Tag.Ally ? "Ally" : "Enemy");
+                //spawnObject.SetLayer(spawnTag == Tag.Ally ? "Ally" : "Enemy");
 
                 objectMaster.AddChild(spawnObject.transform);
                 if (curIndx >= objectList.Count) {
@@ -51,7 +51,7 @@ public class TestSpawn : MonoBehaviour {
                 GeneralObject spawnObject = Instantiate(objectList[indx], curLocation, Quaternion.identity).GetComponent<GeneralObject>();
                 curLocation.x += spawnLength;
                 spawnObject.SetTag(spawnTag == Tag.Ally ? "Ally" : "Enemy");
-                spawnObject.SetLayer(spawnTag == Tag.Ally ? "Ally" : "Enemy");
+                //spawnObject.SetLayer(spawnTag == Tag.Ally ? "Ally" : "Enemy");
 
                 objectMaster.AddChild(spawnObject.transform);
             }

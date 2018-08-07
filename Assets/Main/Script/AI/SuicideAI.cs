@@ -5,15 +5,14 @@ using UnityEngine;
 public class SuicideAI : GeneralAI {
 
     private Collider2D myCollider;
-    private GeneralObject script;
     public Transform target;
     [Header("Target stuff")]
     public bool useTarget = false;
     public float precision = 0.1f;                  //How precise do we check
     public float chargeWait = 0.5f;
     private bool isCharging = false;
-    
-	// Use this for initialization
+
+	#region Default
 	void Awake () {
         myCollider = GetComponent<Collider2D>();
         script = GetComponent<GeneralObject>();
@@ -34,12 +33,12 @@ public class SuicideAI : GeneralAI {
         Vector2 initialDir = Vector2.down;
         if (tag == "Ally") {
             initialDir = Vector2.up;
-        }
+        } else {
+			initialDir = Vector2.down;
+		}
 
         script.Launch(initialDir, script.mySpeed, 1);
     }
-
-    // Update is called once per frame
     void Update () {
         if (myType == AIType.Simple) {
             if (isCharging == false && StaticGlobal.IsOutOfBound(transform) == false && TargetInFront() == true) {
@@ -47,47 +46,46 @@ public class SuicideAI : GeneralAI {
             }
         }
     }
+	#endregion
 
-    //Checking
-    public bool TargetInFront()
-    {
-        if (useTarget == true) {
-            Vector2 leftPoint = myCollider.bounds.center;
-            leftPoint.x -= myCollider.bounds.extents.x;
-            Vector2 rightPoint = myCollider.bounds.center;
-            rightPoint.x += myCollider.bounds.extents.x;
+	#region Action
+	public bool TargetInFront()
+	{
+		if (useTarget == true) {
+			Vector2 leftPoint = myCollider.bounds.center;
+			leftPoint.x -= myCollider.bounds.extents.x;
+			Vector2 rightPoint = myCollider.bounds.center;
+			rightPoint.x += myCollider.bounds.extents.x;
 
-            float angle_1 = Vector2.Angle(leftPoint, target.position);
-            float angle_2 = Vector2.Angle(rightPoint, target.position);
+			float angle_1 = Vector2.Angle(leftPoint, target.position);
+			float angle_2 = Vector2.Angle(rightPoint, target.position);
 
-            //Need to generalize more
-            if (angle_1 <= 90 && angle_2 >= 90) {
-                return true;
-            }
-        } else {
-            Vector2 leftPoint = myCollider.bounds.center;
-            leftPoint.x -= myCollider.bounds.extents.x;
-            Vector2 rightPoint = myCollider.bounds.center;
-            rightPoint.x += myCollider.bounds.extents.x;
-            
-            for (;leftPoint.x <= rightPoint.x; leftPoint.x += precision) {
-                RaycastHit2D[] hits = Physics2D.RaycastAll(leftPoint, transform.up);
-                foreach(RaycastHit2D hit in hits) {
-                    if ((hit.transform.tag == "Enemy" && (tag == "Ally" || tag == "Player")) || (tag == "Enemy" && (hit.transform.tag == "Ally" || hit.transform.tag == "Player"))) {
-                        if (hit.transform.GetComponent<Projectile>() == false) { 
-                            //Not a bullet
-                            return true;
-                        }
-                    }
-                }
-            }           
-        }
+			//Need to generalize more
+			if (angle_1 <= 90 && angle_2 >= 90) {
+				return true;
+			}
+		} else {
+			Vector2 leftPoint = myCollider.bounds.center;
+			leftPoint.x -= myCollider.bounds.extents.x;
+			Vector2 rightPoint = myCollider.bounds.center;
+			rightPoint.x += myCollider.bounds.extents.x;
 
-        return false;
-    }
-       
-    //Actions
-    public IEnumerator Charge()
+			for (; leftPoint.x <= rightPoint.x; leftPoint.x += precision) {
+				RaycastHit2D[] hits = Physics2D.RaycastAll(leftPoint, transform.up);
+				foreach (RaycastHit2D hit in hits) {
+					if ((hit.transform.tag == "Enemy" && (tag == "Ally" || tag == "Player")) || (tag == "Enemy" && (hit.transform.tag == "Ally" || hit.transform.tag == "Player"))) {
+						if (hit.transform.GetComponent<Projectile>() == false) {
+							//Not a bullet
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	public IEnumerator Charge()
     {
         isCharging = true;
         Vector2 direction = Vector2.up;
@@ -106,4 +104,5 @@ public class SuicideAI : GeneralAI {
     {
         target = newTarget;
     }
+	#endregion
 }

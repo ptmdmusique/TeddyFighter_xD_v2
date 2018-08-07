@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ShooterAI : GeneralAI {
 
-    private bool isShooting = false;
-    private Shooter script;                 //Linking the AI to the object
+    private bool isShooting = false;              
 
 	#region Default
 	private void Awake()
@@ -16,14 +15,19 @@ public class ShooterAI : GeneralAI {
     {
         if (myType == AIType.Simple) {
 
-            Vector2 initialDir = Vector2.down;
             if (tag == "Ally") {
                 initialDir = Vector2.up;
             }
 
-            script.Launch(initialDir, script.mySpeed, 1);
-            script.SetAutoShoot(true);
-        }
+			//Move to another location
+			if (followFormation == false) {
+				StartCoroutine(MoveSideWay());
+				StartObject();
+			}
+			script.SetAutoShoot(true);
+		}
+
+		
     }
     private void Update()
     {
@@ -48,4 +52,7 @@ public class ShooterAI : GeneralAI {
         }
     }
 	#endregion
+
+
+
 }

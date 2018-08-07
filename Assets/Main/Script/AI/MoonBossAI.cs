@@ -28,7 +28,8 @@ public class MoonBossAI : GeneralAI
 	//Path
 	private float pathSpeed = 50;
 	private float pathMilestone = 0.9f;
-	private DOTweenPath pathScript;	
+	//private DOTweenPath pathScript;	
+	[SerializeField] private List<DOTweenPath> pathList;
 
 	//Coroutine
 	private Coroutine spawningCoroutine;
@@ -49,8 +50,8 @@ public class MoonBossAI : GeneralAI
 		minSpawnRadius = temp.radius * 1.5f * transform.localScale.x;       //Since it is a circle, the .x and .y scales should be the same
 		maxSpawnRadius = minSpawnRadius * 1.7f;
 
-		//Get DOTween
-		pathScript = GetComponent<DOTweenPath>();
+		//Get the paths
+		pathList.AddRange(GetComponents<DOTweenPath>());
 
 		//TODO: Link with database
 		//Changing the info based on the difficulty
@@ -60,7 +61,7 @@ public class MoonBossAI : GeneralAI
 				curMileStone = 0.6f;
 				percentPerMileStone = 0.3f;
 				//Boss
-				speedMultiplier = 1.2f;
+				speedMultiplier = 1.1f;
 				//Minion
 				spawningMilestone = 2;
 				minionTimeMilestone = 1.2f;
@@ -72,7 +73,7 @@ public class MoonBossAI : GeneralAI
 				curMileStone = 0.8f;
 				percentPerMileStone = 0.25f;
 				//Boss
-				speedMultiplier = 1.4f;
+				speedMultiplier = 1.2f;
 				//Minion
 				spawningMilestone = 2;
 				minionTimeMilestone = 1.4f;
@@ -84,7 +85,7 @@ public class MoonBossAI : GeneralAI
 				curMileStone = 0.9f;
 				percentPerMileStone = 0.2f;
 				//Boss
-				speedMultiplier = 1.5f;
+				speedMultiplier = 1.3f;
 				//Minion
 				spawningMilestone = 3;
 				minionTimeMilestone = 1.45f;
@@ -130,11 +131,7 @@ public class MoonBossAI : GeneralAI
 
 		//Decide what to do next
 		int chance = Random.Range(0, 100);
-		if (chance < 70) {
-			//Keep moving
-			isMoving = true;
-			MoveToRandom();
-		} else if (chance < 90) {
+		if (chance < 20) {
 			//Scaling as a indicator
 			transform.DOScale(1f, 0.5f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InOutElastic).
 				OnComplete(
@@ -144,6 +141,10 @@ public class MoonBossAI : GeneralAI
 					UsePath();
 				}
 				);
+		} else if (chance < 90) {
+			//Keep moving
+			isMoving = true;
+			MoveToRandom();
 		} else {
 			//20% that we will do nothing and wait for a little bit
 			Invoke("MoveDecide", moveIdle);
@@ -161,7 +162,7 @@ public class MoonBossAI : GeneralAI
 			if (script.minionSpawnedList.Count > 0) {
 				//We already spawned something
 					//Changing color as an indicator
-				GetComponent<SpriteRenderer>().DOColor(Color.red, 0.2f).SetLoops(2, LoopType.Yoyo).
+				GetComponent<SpriteRenderer>().DOColor(Color.red, 0.1f).SetLoops(2, LoopType.Yoyo).
 					SetEase(Ease.InOutQuad).
 					OnComplete(() => launchingCoroutine = StartCoroutine(LaunchMinion()));				
 			} else {
@@ -183,16 +184,30 @@ public class MoonBossAI : GeneralAI
 		//Decide what to do next
 		MoveDecide();
 
-		Transform player = StaticGlobal.GetPlayer();
 		List<Transform> temp = new List<Transform>();
-		for (int indx = 0; indx < script.minionSpawnedList.Count; indx++) {
-			Transform minion = script.minionSpawnedList[indx];
-			if (minion != null) {
-				script.objectMaster.AddChild(minion);
-				GeneralObject minionScript = minion.GetComponent<GeneralObject>();
-				script.MoveMinion(minionScript, player.position - minion.position); //Launch the minion
-				temp.Add(minion);       //Temporarily add the minion to delete list
-				yield return new WaitForSeconds(0.3f);
+		if (Random.Range(0, 100) < 72) {
+			//Launch to player
+			Transform player = StaticGlobal.GetPlayer();
+			for (int indx = 0; indx < script.minionSpawnedList.Count; indx++) {
+				Transform minion = script.minionSpawnedList[indx];
+				if (minion != null) {
+					script.objectMaster.AddChild(minion);
+					GeneralObject minionScript = minion.GetComponent<GeneralObject>();
+					script.MoveMinion(minionScript, player.position - minion.position); //Launch the minion
+					temp.Add(minion);       //Temporarily add the minion to delete list
+					yield return new WaitForSeconds(0.3f);
+				}
+			}
+		} else {
+			//Launch outward
+			for (int indx = 0; indx < script.minionSpawnedList.Count; indx++) {
+				Transform minion = script.minionSpawnedList[indx];
+				if (minion != null) {
+					script.objectMaster.AddChild(minion);
+					GeneralObject minionScript = minion.GetComponent<GeneralObject>();
+					script.MoveMinion(minionScript, minion.position - transform.position); //Launch the minion
+					temp.Add(minion);       //Temporarily add the minion to delete list
+				}
 			}
 		}
 
@@ -220,6 +235,8 @@ public class MoonBossAI : GeneralAI
 	{
 		MinionDecide();       //Also decide what to do
 
+		int indx = Random.Range(0, pathList.Count);
+		DOTweenPath pathScript = pathList[indx];
 		pathScript.GetTween().timeScale = pathSpeed;
 		pathScript.DORestart(true);
 	}							//State

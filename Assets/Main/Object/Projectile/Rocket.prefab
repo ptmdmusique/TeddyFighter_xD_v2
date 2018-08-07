@@ -125,8 +125,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1423783217494908}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.6489754, y: -3.439755, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
+  m_LocalPosition: {x: 17.578728, y: -5.4095516, z: 0}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_Children:
   - {fileID: 4409023067100466}
   - {fileID: 4522809415378392}
@@ -197,6 +197,7 @@ MonoBehaviour:
   myDamage: 50
   canAttack: 0
   myScore: 10
+  autoMove: 0
   fasterDuration: -1
   fasterMax: 0
   explosionList:
@@ -205,6 +206,9 @@ MonoBehaviour:
   aoePercentage: 0
   collectible: []
   collectibleOption: 0
+  vfxMaster: {fileID: 0}
+  bulletMaster: {fileID: 0}
+  objectMaster: {fileID: 0}
   myRageReward: 0
   lifeTime: 0
   canDestroyProjectile: 0
@@ -456,8 +460,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.75
-      minScalar: 0.25
+      scalar: 0.5
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
