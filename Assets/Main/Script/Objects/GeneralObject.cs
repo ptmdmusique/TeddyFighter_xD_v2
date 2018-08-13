@@ -314,7 +314,7 @@ public class GeneralObject : MonoBehaviour {
 	{
 		return myRb;
 	}
-	public virtual void SetAutoShoot(bool target = true, int indx = -1){}
+	public virtual void SetAutoShoot(bool v){}
 	//For shooting AI
 	public virtual bool Shoot(Vector2 target, int indx = -1, int delay = 0) { return false; }
 	public virtual void StopShooting(int indx = -1, int delay = 0) { }

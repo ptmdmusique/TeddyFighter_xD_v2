@@ -10,9 +10,7 @@ public class FollowTarget : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (target != null) {
-			offset = target.position - transform.position;
-		}
+        offset = target.position - transform.position;
 	}
 	
 	// Update is called once per frame

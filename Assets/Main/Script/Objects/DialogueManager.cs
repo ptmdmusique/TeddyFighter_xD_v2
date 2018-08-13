@@ -15,14 +15,11 @@ public class DialogueManager : MonoBehaviour {
 	public Scrollbar scrollBar;
 
 	[Header("Dialogue info")]
-	public List<Dialogue> dialogueList;
+	[HideInInspector] public string newName;
+	[TextArea] public List<string> curDialogues;
+	public List<string> curName;
 	public float pauseBetweenCharacter = 0.1f;
 	private Coroutine showText;
-	public bool useEnterToContinue = false;
-	public GameObject eventToTriggerAfter;
-	public float newTimeScale = -1;
-	private float oldTimeScale = 0;
-
 
 	#region Default
 	// Update is called once per frame
@@ -38,63 +35,42 @@ public class DialogueManager : MonoBehaviour {
 			SkipShowing();
 		}
 	}
-	#endregion
-
-	#region Action
-	public void StartDialogue()
+	private void OnEnable()
 	{
 		//Reveal the text on enable
 		canvasGroup.DOFade(1, 1);
 		StartCoroutine(ShowAllText());
 	}
-	public void StopDialogue()
+	private void OnDisable()
 	{
 		info.DOKill();
 		info.color = new Color(info.color.r, info.color.g, info.color.b, 1);    //Make sure the text is visible at first
 		StopAllCoroutines();
 	}
+	#endregion
+
+	#region Action
 	public IEnumerator ShowAllText()
 	{
 		//Enable the info
 		info.enabled = true;
 		info.DOFade(0.4f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-		//Timescale stuff
-		oldTimeScale = Time.timeScale;
-		if (newTimeScale > -1) {
-			Time.timeScale = newTimeScale;
-		}
 
-		for (int indx = 0; indx < dialogueList.Count; indx++) {
-			chatterName.text = "Name:" + dialogueList[indx].chatterName;
+		for (int indx = 0; indx < curDialogues.Count; indx++) {
+			chatterName.text = "Name: " + curName[indx];
 			scrollBar.value = 1;
-			ShowText(dialogueList[indx].dialogue); //Revealing the current text
+			ShowText(curDialogues[indx]); //Revealing the current text
 			while (showText != null) {
 				//While revealing, wait
 				yield return new WaitForEndOfFrame();
 			}
 
-			if (useEnterToContinue == true) {
-				//When finish revealing, wait until the play press enter or something
-				yield return new WaitUntil(() => Input.GetButtonDown("Submit")); 
-			} else {
-				yield return new WaitForSeconds(1);
-			}
+			//When finish revealing, wait until the play press enter or something
+			yield return new WaitUntil(() => Input.GetButtonDown("Submit"));
 		}
 
 		//Fading out
 		canvasGroup.DOFade(0, 1).OnComplete(() => transform.gameObject.SetActive(false));
-
-		//Reset the timescale
-		Time.timeScale = oldTimeScale;
-
-		//Clear the list
-		dialogueList.Clear();
-
-		//Trigger the event
-		if (eventToTriggerAfter != null) {
-			eventToTriggerAfter.SetActive(true);
-			eventToTriggerAfter.SetActive(false);
-		}
 	}
 	public void ShowText(string newDialogue)
 	{

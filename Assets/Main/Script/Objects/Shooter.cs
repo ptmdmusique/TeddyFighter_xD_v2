@@ -112,7 +112,7 @@ public class Shooter : GeneralObject {
 			}
 		}
     }
-    public override void SetAutoShoot(bool target = true, int indx = -1)
+    public void SetAutoShoot(bool target = true, int indx = -1)
     {
         if (indx == -1) {
             foreach (WeaponList weapon in weaponList) {

@@ -15,7 +15,6 @@ public class ShooterAI : GeneralAI {
     {
         if (myType == AIType.Simple) {
 
-			Vector2 initialDir = Vector2.down;
             if (tag == "Ally") {
                 initialDir = Vector2.up;
             }
@@ -23,23 +22,22 @@ public class ShooterAI : GeneralAI {
 			//Move to another location
 			if (followFormation == false) {
 				StartCoroutine(MoveSideWay());
-				StartObject(initialDir);
+				StartObject();
 			}
 			script.SetAutoShoot(true);
-		}	
+		}
+
+		
     }
     private void Update()
     {
         if (myType == AIType.Simple) {
             if (isShooting == false) {
                 if (StaticGlobal.IsOutOfBound(transform) == false) {
-					Vector2 target = Vector2.zero;
-					if (followFormation == false) {
-						target = Vector2.up;
-						if (tag == "Enemy") {
-							target = Vector2.down;
-						}
-					} 
+                    Vector2 target = Vector2.up;
+                    if (tag == "Enemy") {
+                        target = Vector2.down;
+                    }
                     script.canAttack = true;
                     script.Shoot(target);
                     isShooting = true;
