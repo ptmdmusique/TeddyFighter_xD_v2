@@ -19,7 +19,7 @@ public class Collectible : MonoBehaviour {
 		vfxMaster = GameObject.Find("VFX_Collector").GetComponent<Collector>();
 
 		if (lifeTime > 0) {
-			StartCoroutine(DestroySelf());
+			Invoke("Collected", lifeTime);
 		}
 	}
 	#endregion
@@ -37,24 +37,6 @@ public class Collectible : MonoBehaviour {
 			vfxMaster.AddChild(Instantiate(explosion, transform.position, Quaternion.identity));
 		}
 		return;
-	}
-	public IEnumerator DestroySelf()
-	{
-		foreach(SpriteRenderer graphic in GetComponentsInChildren<SpriteRenderer>()) {
-			graphic.DOFade(0, lifeTime);
-		}
-		yield return new WaitForSeconds(lifeTime);
-
-		Destroy(gameObject);
-	}
-	public void FadeOutParticleSystem(ParticleSystem system)
-	{
-		ParticleSystem.Particle[] particles = new ParticleSystem.Particle[system.particleCount]; 
-		system.GetParticles(particles);
-
-		for (int p = 0; p < particles.Length; p++) {
-			particles[p].GetCurrentColor().
-		}
 	}
 	#endregion
 }

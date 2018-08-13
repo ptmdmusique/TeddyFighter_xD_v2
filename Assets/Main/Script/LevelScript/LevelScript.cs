@@ -65,7 +65,7 @@ public abstract class LevelScript : MonoBehaviour {
 			int chance = Random.Range(0, 100);
 			if (chance < minion.chance) {
 				//If the randomized chance is correct then spawn it
-				Transform spawned = Instantiate(minion.minion, new Vector2(Random.Range(-screenWidth, screenWidth) * 0.8f, enemySpawnLocation.position.y), Quaternion.identity);
+				Transform spawned = Instantiate(minion.minion, new Vector2(Random.Range(-screenWidth / 2.0f, screenWidth / 2.0f) * 0.8f, enemySpawnLocation.position.y), Quaternion.identity);
 				objectCollector.AddChild(spawned);
 			}
 		}
