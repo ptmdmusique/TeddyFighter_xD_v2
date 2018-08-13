@@ -6,7 +6,7 @@ using DG.Tweening;
 public class MoonBossAI : GeneralAI
 {
 	//Main script
-	private MoonBoss script;
+	private new MoonBoss script;
 
 	//Position stuff
 	private Vector3 bossInitialPosition;

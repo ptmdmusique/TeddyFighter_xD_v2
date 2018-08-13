@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : Shooter {
 
@@ -29,6 +30,7 @@ public class Player : Shooter {
     [SerializeField] private StatusIndicator dataFragmentSI;
 	[SerializeField] private StatusIndicator scoreSI;
 	[SerializeField] private StatusIndicator powerupSI;
+	[SerializeField] private TextMeshProUGUI powerupValue;
 	[SerializeField] private WeaponIcon singleIcon;
     [SerializeField] private WeaponIcon multiIcon;
     [SerializeField] private WeaponIcon ultiIcon;
@@ -80,12 +82,14 @@ public class Player : Shooter {
 	protected void OnTriggerEnter2D(Collider2D collision)
 	{
 		Collectible script = collision.GetComponent<Collectible>();
-		
 		if (collision.tag == "Collectible") {
 			if(collision.name.Contains("Data") == true) {
 				ChangeDataFragment((int) Random.Range(script.minValue, script.maxValue));
 			} else if (collision.name.Contains("Health") == true) {
 				ChangeHealth((int) Random.Range(script.minValue, script.maxValue));
+			} else if (collision.name.Contains("Powerup") == true) {
+				
+				ChangePowerUp((int) script.minValue);
 			}
 			script.Collected();
 		}
@@ -141,28 +145,34 @@ public class Player : Shooter {
 	}
 	public void ChangePowerUp(int amount)
 	{
+		curPowerUp = Mathf.Clamp(curPowerUp + amount, 0, maxPowerUp);
 		if (amount > 0) {
 			if (powerupCoroutine == null) {
+				powerupTimer = powerupTime;
 				powerupCoroutine = StartCoroutine(PowerupCoroutine());
 			}
-		}
-		curPowerUp = Mathf.Clamp(curPowerUp + amount, 0, maxPowerUp);
+		}	
 
 		//TODO: Change the statusIndicator
 		foreach(WeaponList weapon in weaponList) {
 			weapon.myWeapon.powerupLevel += amount;
 		}
+
+		powerupValue.text = curPowerUp.ToString();
 	}
 	private IEnumerator PowerupCoroutine()
 	{
 		while (curPowerUp > 0) {
-			while (powerupTime > 0) {
+			while (powerupTimer > 0) {
 				powerupTimer -= Time.deltaTime;
+				powerupSI.SetValue(powerupTimer, powerupTime);
 				yield return new WaitForEndOfFrame();
 			}
 			ChangePowerUp(-1);
 			powerupTimer = powerupTime;                 //Reset the timer
 		}
+
+		powerupCoroutine = null;
 	}
 	#endregion
 

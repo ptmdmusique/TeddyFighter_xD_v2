@@ -204,10 +204,11 @@ public class Weapon : MonoBehaviour {
         }
         targetVector = newTarget.position - transform.position;
     }
-    public void UpdateTarget(Vector2 newTarget)             //Need to work on rotation of the nozzle
+    public void UpdateTarget(Vector2 newTarget)            
     {
         targetVector = newTarget;
-    }
+		gunToNozzle = nozzle.position - transform.position;  //Update nozzle position
+	}
     protected IEnumerator UpdateTargetRoutine()
     {
 		gunToNozzle = nozzle.position - transform.position;  //Update nozzle position

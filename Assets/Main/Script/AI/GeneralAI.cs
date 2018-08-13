@@ -21,22 +21,36 @@ public abstract class GeneralAI : MonoBehaviour {
 	//NOTE: CHECK AI SCHEME FOR MORE INFO OF THE STATES
 
 	protected GeneralObject script; //Linking the AI to the object
-	protected Vector2 initialDir = Vector2.down;
 
 	#region Action
 	public IEnumerator MoveSideWay()
 	{
 		float multiplier = Random.Range(-1f, 1f);
+		
+		if (transform.position.x + moveDistance > StaticGlobal.GetCameraWidth(Camera.main) / 2) {
+			//Too much to the right then move to the left
+			multiplier = -1;	
+		} else if (transform.position.x - moveDistance < -StaticGlobal.GetCameraWidth(Camera.main) / 2){
+			multiplier = 1;
+		}
 		Vector2 newLocation = new Vector2(transform.position.x + multiplier * moveDistance + Mathf.Sign(multiplier) * minDistance, transform.position.y + GetComponent<GeneralObject>().GetRB().velocity.y * moveTime);
-		transform.DOMove(newLocation, moveTime).SetEase(Ease.Linear);
+
+		transform.DOMove(newLocation, moveTime).SetEase(Ease.OutQuad);
 
 		yield return new WaitForSeconds(Random.Range(moveDelay * 0.80f, moveDelay));
 
 		StartCoroutine(MoveSideWay());
 	}
-	public void StartObject()
+	public void StartObject(Vector3 direction)
 	{
-		script.Launch(initialDir, script.mySpeed, 1);
+		if (direction == Vector3.zero) {
+			if (tag == "Ally") {
+				direction = Vector3.up;
+			} else {
+				direction = Vector3.down;
+			}
+		}
+		script.Launch(direction, script.mySpeed, 1);
 	}
 	#endregion
 }

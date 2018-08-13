@@ -433,9 +433,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nozzle: {fileID: 4282106534179756}
-  aimPoint: {fileID: 4203539551623908}
-  mAudioSource: {fileID: 0}
   ableToShoot: 0
+  powerupLevel: 0
+  powerupPS: {fileID: 0}
   bulletList:
   - fireRate: 0.5
     bulletPerWave: 1
@@ -468,6 +468,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
+  followFormation: 0
+  moveDelay: 5
+  moveDistance: 7
+  minDistance: 4
+  moveTime: 1
 --- !u!114 &114992186804434774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -495,12 +500,16 @@ MonoBehaviour:
   aoePercentage: 20
   collectible:
   - numberOfSpawn: 1
-    spawnChance: 20
+    spawnChance: 10
     collectible: {fileID: 4569964203963704, guid: 0d40580b88dcc25449a69b239b7a4c0f,
       type: 2}
   - numberOfSpawn: 1
-    spawnChance: 10
+    spawnChance: 30
     collectible: {fileID: 4321384198790034, guid: b4cf5e40ae7a84b4cbf847bd97cd9194,
+      type: 2}
+  - numberOfSpawn: 1
+    spawnChance: 12
+    collectible: {fileID: 4160564128459840, guid: bb8cee8d2dea1634db1f0c0b0e0ea637,
       type: 2}
   collectibleOption: 0
   vfxMaster: {fileID: 0}
