@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1947251217033280}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1204636590384986
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4324985342606566}
   - component: {fileID: 212708736266562854}
@@ -31,9 +31,9 @@ GameObject:
 --- !u!1 &1714809027164008
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4366869885883596}
   - component: {fileID: 212027081478839434}
@@ -48,9 +48,9 @@ GameObject:
 --- !u!1 &1947251217033280
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4724570952969258}
   - component: {fileID: 212370223443938492}
@@ -68,7 +68,7 @@ GameObject:
 --- !u!4 &4324985342606566
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1204636590384986}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
@@ -81,7 +81,7 @@ Transform:
 --- !u!4 &4366869885883596
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1714809027164008}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
@@ -94,7 +94,7 @@ Transform:
 --- !u!4 &4724570952969258
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
@@ -110,7 +110,7 @@ Transform:
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_BodyType: 1
@@ -129,7 +129,7 @@ Rigidbody2D:
 --- !u!61 &61294854675716588
 BoxCollider2D:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_Enabled: 1
@@ -155,7 +155,7 @@ BoxCollider2D:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1204636590384986}
   m_Enabled: 1
@@ -173,7 +173,7 @@ Animator:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1714809027164008}
   m_Enabled: 1
@@ -190,7 +190,7 @@ Animator:
 --- !u!114 &114629631093653384
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_Enabled: 1
@@ -199,11 +199,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 150
+  curHealth: 0
   mySpeed: 10
-  isInvicible: 0
+  isInvincible: 0
   myDamage: 80
   canAttack: 0
   myScore: 100
+  autoMove: 0
   fasterDuration: 2
   fasterMax: 50
   explosionList:
@@ -211,16 +213,26 @@ MonoBehaviour:
   aoeRadius: 2
   aoePercentage: 40
   collectible:
-  - spawnChance: 30
+  - numberOfSpawn: 1
+    spawnChance: 30
     collectible: {fileID: 4321384198790034, guid: b4cf5e40ae7a84b4cbf847bd97cd9194,
       type: 2}
-  - spawnChance: 40
+  - numberOfSpawn: 1
+    spawnChance: 50
     collectible: {fileID: 4569964203963704, guid: 0d40580b88dcc25449a69b239b7a4c0f,
       type: 2}
+  - numberOfSpawn: 1
+    spawnChance: 45
+    collectible: {fileID: 4160564128459840, guid: bb8cee8d2dea1634db1f0c0b0e0ea637,
+      type: 2}
+  collectibleOption: 0
+  vfxMaster: {fileID: 0}
+  bulletMaster: {fileID: 0}
+  objectMaster: {fileID: 0}
 --- !u!114 &114969629466672732
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_Enabled: 1
@@ -229,6 +241,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
+  followFormation: 0
+  moveDelay: 5
+  moveDistance: 7
+  minDistance: 4
+  moveTime: 1
   target: {fileID: 0}
   useTarget: 0
   precision: 0.1
@@ -236,7 +253,7 @@ MonoBehaviour:
 --- !u!212 &212027081478839434
 SpriteRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1714809027164008}
   m_Enabled: 1
@@ -278,10 +295,11 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!212 &212370223443938492
 SpriteRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947251217033280}
   m_Enabled: 1
@@ -323,10 +341,11 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!212 &212708736266562854
 SpriteRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1204636590384986}
   m_Enabled: 1
@@ -368,3 +387,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+  m_SpriteSortPoint: 0

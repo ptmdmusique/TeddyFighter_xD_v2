@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class StatusIndicator : MonoBehaviour {
 
@@ -10,17 +11,17 @@ public class StatusIndicator : MonoBehaviour {
     public Image statusBar;
     public SpriteRenderer statusIcon;
     private Sprite tempIcon;
-	[SerializeField] private Text statusText;
+	[SerializeField] private TextMeshProUGUI statusText;
 
 	[Header("Own info")]
     public Vector3 offset;
     public bool followTarget = false;
-    public Transform target;
-	public bool useMaxValue = true;
+    public Transform target;	
+	public bool useMaxValue = true;				//Do we use max value, or just current value?
     private Animator myAnim;
 
     [Header("Image Alpha Effect")]
-    public bool mapAlpha = false;               //Do we increase object's alpha as value increase
+    public bool mapAlpha = false;               //Do we increase object's alpha as value increase?
     public bool inverseAlpha = false;           //Value increase -> alpha increase
     public float alphaMultiplier = 1;           //More intense?
 
@@ -36,22 +37,25 @@ public class StatusIndicator : MonoBehaviour {
 	private Tween shaking;
 
 	//Lerping stuff
-	private class LerpInfo
+	[System.Serializable]
+	public class LerpInfo
 	{
 		public float timeTakenDuringLerp = 1f;
-		public bool isLerping = false;
+		[HideInInspector] public bool isLerping = false;
 
-		public float curMaxVal = -1;
-		public float maxVal;
-		public float curVal;
+		[HideInInspector] public float curMaxVal = -1;
+		[HideInInspector] public float maxVal;
+		[HideInInspector] public float curVal;
 	}
-	private LerpInfo lerping;
+	public LerpInfo lerping;
 
 	#region Default
 	private void Awake() {
         myAnim = GetComponent<Animator>();
 
-		lerping = new LerpInfo();
+		if (lerping == null) {
+			lerping = new LerpInfo();
+		}
     }
     private void Start() {
         SetTarget(target);
@@ -64,7 +68,7 @@ public class StatusIndicator : MonoBehaviour {
 	#endregion
 
 	#region Action
-	public void SetValue(float curValue, float maxValue) {
+	public void SetValue(float curValue, float maxValue = 99999) {
 		//Reset the value
 		lerping.curMaxVal = curValue;
 		lerping.maxVal = maxValue;

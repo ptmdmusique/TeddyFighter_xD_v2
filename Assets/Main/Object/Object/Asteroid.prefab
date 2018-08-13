@@ -117,12 +117,16 @@ MonoBehaviour:
   aoePercentage: 10
   collectible:
   - numberOfSpawn: 1
-    spawnChance: 30
+    spawnChance: 20
     collectible: {fileID: 4569964203963704, guid: 0d40580b88dcc25449a69b239b7a4c0f,
       type: 2}
   - numberOfSpawn: 1
     spawnChance: 10
     collectible: {fileID: 4321384198790034, guid: b4cf5e40ae7a84b4cbf847bd97cd9194,
+      type: 2}
+  - numberOfSpawn: 1
+    spawnChance: 5
+    collectible: {fileID: 4160564128459840, guid: bb8cee8d2dea1634db1f0c0b0e0ea637,
       type: 2}
   collectibleOption: 0
   vfxMaster: {fileID: 0}

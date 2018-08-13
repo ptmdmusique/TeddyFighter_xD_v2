@@ -697,7 +697,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1409322275868932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4711673050968382}
@@ -737,7 +737,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1825145707231014}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1, y: -0.697, z: 0}
+  m_LocalPosition: {x: 0.7, y: -0.697, z: 0}
   m_LocalScale: {x: 0.9999967, y: 0.9999971, z: 0.9999971}
   m_Children:
   - {fileID: 4960296158195690}
@@ -767,7 +767,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1753421242232370}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1, y: -0.697, z: 0}
+  m_LocalPosition: {x: -0.7, y: -0.697, z: 0}
   m_LocalScale: {x: 0.9999967, y: 0.9999971, z: 0.9999971}
   m_Children:
   - {fileID: 4591037588621846}
@@ -862,7 +862,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1773074081348560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4700320745767946}
@@ -1555,6 +1555,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nozzle: {fileID: 4591037588621846}
   ableToShoot: 0
+  powerupLevel: 0
+  powerupPS: {fileID: 4481829022526564, guid: 98a5b7c18513eb44086b27c7c4d082a3, type: 2}
   bulletList:
   - fireRate: 4
     bulletPerWave: 1
@@ -1573,7 +1575,7 @@ MonoBehaviour:
     fasterMax: -1
     fasterDuration: -1
     bullet: {fileID: 4159504541090340, guid: 3401c6d6b6b57da438076ec62a8832ce, type: 2}
-  - fireRate: 2
+  - fireRate: 3
     bulletPerWave: 1
     waitDuringWave: 0
     waitAfterWave: 0
@@ -1590,10 +1592,10 @@ MonoBehaviour:
     fasterMax: 0
     fasterDuration: 20
     bullet: {fileID: 4321999485437178, guid: 42057429a35ee4d40bce70bbcd245619, type: 2}
-  - fireRate: 2
+  - fireRate: 1.8
     bulletPerWave: 1
     waitDuringWave: 0
-    waitAfterWave: 0.5
+    waitAfterWave: 0.2
     numberOfWave: 1
     bulletBeforeWait: 999
     canBeUsed: 1
@@ -1622,6 +1624,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nozzle: {fileID: 4657173143849218}
   ableToShoot: 0
+  powerupLevel: 0
+  powerupPS: {fileID: 4481829022526564, guid: 98a5b7c18513eb44086b27c7c4d082a3, type: 2}
   bulletList:
   - fireRate: 4
     bulletPerWave: 1
@@ -1640,7 +1644,7 @@ MonoBehaviour:
     fasterMax: -1
     fasterDuration: -1
     bullet: {fileID: 4159504541090340, guid: 3401c6d6b6b57da438076ec62a8832ce, type: 2}
-  - fireRate: 2
+  - fireRate: 3
     bulletPerWave: 1
     waitDuringWave: 0
     waitAfterWave: 0
@@ -1657,10 +1661,10 @@ MonoBehaviour:
     fasterMax: 0
     fasterDuration: 20
     bullet: {fileID: 4321999485437178, guid: 42057429a35ee4d40bce70bbcd245619, type: 2}
-  - fireRate: 2
+  - fireRate: 1.8
     bulletPerWave: 1
     waitDuringWave: 0
-    waitAfterWave: 0.5
+    waitAfterWave: 0.2
     numberOfWave: 1
     bulletBeforeWait: 999
     canBeUsed: 1
@@ -1689,6 +1693,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nozzle: {fileID: 4960296158195690}
   ableToShoot: 0
+  powerupLevel: 0
+  powerupPS: {fileID: 4481829022526564, guid: 98a5b7c18513eb44086b27c7c4d082a3, type: 2}
   bulletList:
   - fireRate: 4
     bulletPerWave: 1
@@ -1707,7 +1713,7 @@ MonoBehaviour:
     fasterMax: -1
     fasterDuration: -1
     bullet: {fileID: 4159504541090340, guid: 3401c6d6b6b57da438076ec62a8832ce, type: 2}
-  - fireRate: 2
+  - fireRate: 3
     bulletPerWave: 1
     waitDuringWave: 0
     waitAfterWave: 0
@@ -1724,10 +1730,10 @@ MonoBehaviour:
     fasterMax: 0
     fasterDuration: 20
     bullet: {fileID: 4321999485437178, guid: 42057429a35ee4d40bce70bbcd245619, type: 2}
-  - fireRate: 2
+  - fireRate: 1.8
     bulletPerWave: 1
     waitDuringWave: 0
-    waitAfterWave: 0.5
+    waitAfterWave: 0.2
     numberOfWave: 1
     bulletBeforeWait: 999
     canBeUsed: 1
@@ -1788,12 +1794,17 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0}
   maxRage: 100
   curRage: 0
+  curPowerUp: 0
+  maxPowerUp: 5
+  powerupTime: 3
+  powerupTimer: 0
   dataFragment: 0
   score: 0
   myHealthSI: {fileID: 0}
   myRageSI: {fileID: 0}
   dataFragmentSI: {fileID: 0}
   scoreSI: {fileID: 0}
+  powerupSI: {fileID: 0}
   singleIcon: {fileID: 0}
   multiIcon: {fileID: 0}
   ultiIcon: {fileID: 0}
@@ -1868,6 +1879,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nozzle: {fileID: 4119092853716380}
   ableToShoot: 0
+  powerupLevel: 0
+  powerupPS: {fileID: 4481829022526564, guid: 98a5b7c18513eb44086b27c7c4d082a3, type: 2}
   bulletList:
   - fireRate: 2
     bulletPerWave: 10

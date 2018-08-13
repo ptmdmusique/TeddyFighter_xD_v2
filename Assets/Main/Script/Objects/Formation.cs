@@ -33,11 +33,9 @@ public class Formation : MonoBehaviour {
 	[Header("Formation info")]
 	public List<Minion> minionList;
 	public float waitBetweenSpawn = 0.5f;
-	public float minSpeed = 1;
 	public float pathTime = 3;
-	private List<Transform> spawnedList;
 	[Header("Path info")]
-	public Vector3[] wayPoints;
+	public List<Vector3> wayPoints;
 	public bool closedPath = false;
 	public MirrorType pathMirrorType = MirrorType.None;
 	public bool loop = false;
@@ -59,38 +57,31 @@ public class Formation : MonoBehaviour {
 	private void Awake()
 	{
 		objectCollector = GameObject.Find("Object_Collector").GetComponent<Collector>();
+		wayPoints = GetComponent<DOTweenPath>().wps;
+		wayPoints.Insert(0, transform.position);
 	}
 	public void Start()
 	{
-		RebuildList();
 		if (pathOrientation == Orientation.LookAtTarget && lookAtTarget == null) {
 			lookAtTarget = GameObject.Find("Player").transform;
+		}
+	}
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.K)) {
+			SummonFormation(transform.position);
 		}
 	}
 
 	#region Resetting stuff
 	public void SetZToZero()
 	{
-		if (wayPoints.Length <= 0) {
+		if (wayPoints.Count <= 0) {
 			return;
 		}
 
-		for (int indx = 0; indx < wayPoints.Length; indx++) {
-			wayPoints[indx].z = 0;
-		}
-	}
-	public void RebuildList()
-	{
-		FindMinSpeed();
-	}
-	public void FindMinSpeed()
-	{
-		//Find the minimum speed of the objects in the current list
-		foreach(Minion minion in minionList) {
-			float speed = minion.minion.GetComponent<GeneralObject>().mySpeed;
-			if (speed < minSpeed) {
-				minSpeed = speed;
-			}
+		for (int indx = 0; indx < wayPoints.Count; indx++) {
+			wayPoints[indx] = new Vector3 (wayPoints[indx].x, wayPoints[indx].y, 0);
 		}
 	}
 	#endregion
@@ -98,19 +89,19 @@ public class Formation : MonoBehaviour {
 	#region Formation stuff
 	public void SummonFormation(Vector3 center)
 	{
-		if (wayPoints.Length <= 0) {
+		if (wayPoints.Count <= 0) {
 			return;
 		}
 
-		Vector3[] truePath = new Vector3[wayPoints.Length];
+		Vector3[] truePath = new Vector3[wayPoints.Count];
 		Vector3[] mirroredPath = null;
 
 		if (pathMirrorType != MirrorType.None) {
-			mirroredPath = new Vector3[wayPoints.Length];
+			mirroredPath = new Vector3[wayPoints.Count];
 		}
 
 		//Translate all the path upward
-		for (int indx = 0; indx < wayPoints.Length; indx++) {
+		for (int indx = 0; indx < wayPoints.Count; indx++) {
 			//Set the true path
 			truePath[indx] = new Vector3(wayPoints[indx].x, wayPoints[indx].y + center.y, 0);
 
@@ -145,6 +136,7 @@ public class Formation : MonoBehaviour {
 			for(int indx = 0; indx < minion.numberOfMinion; indx++) {
 				Transform spawnedObject = Instantiate(minion.minion, path[0], Quaternion.identity);
 				objectCollector.AddChild(spawnedObject);
+				spawnedObject.GetComponent<GeneralAI>().followFormation = true;
 
 				Tween tween2;
 				switch (pathOrientation) {
@@ -153,6 +145,7 @@ public class Formation : MonoBehaviour {
 						.SetOptions(closedPath)
 						.SetEase(Ease.Linear)
 						.SetLookAt(lookAhead, Vector3.forward, Vector3.right)
+						.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
 						;
 						if (loop == true) {
 							//Loop to inifinity and beyond!
@@ -165,6 +158,7 @@ public class Formation : MonoBehaviour {
 							.SetOptions(closedPath)
 							.SetEase(Ease.Linear)
 							.SetLookAt(lookAtPosition)
+							.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
 							;
 						if (loop == true) {
 							//Loop to inifinity and beyond!
@@ -177,6 +171,7 @@ public class Formation : MonoBehaviour {
 							.SetOptions(closedPath)
 							.SetEase(Ease.Linear)
 							.SetLookAt(lookAtTarget)
+							.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
 							;
 						if (loop == true) {
 							//Loop to inifinity and beyond!
@@ -194,7 +189,8 @@ public class Formation : MonoBehaviour {
 						tween2 = spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
 							.SetOptions(closedPath)
 							.SetEase(Ease.Linear)
-							;
+							.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
+						;
 						if (loop == true) {
 							//Loop to inifinity and beyond!
 							tween2.SetLoops(-1, LoopType.Yoyo);
@@ -204,16 +200,9 @@ public class Formation : MonoBehaviour {
 						StartCoroutine(RotateObjectWithDelay(spawnedObject, targetRotation, 0.00001f));
 						break;
 				}
-
-				//Add the object to the spawned list
-				spawnedList.Add(spawnedObject);
-
 				yield return new WaitForSeconds(waitBetweenSpawn);
 			}
 		}
-
-		//Afterward, launch all the object
-		LaunchObjects();
 	}
 	#endregion
 
@@ -223,12 +212,6 @@ public class Formation : MonoBehaviour {
 		yield return new WaitForSeconds(delay);
 
 		target.eulerAngles = targetRotation;
-	}
-	public void LaunchObjects()
-	{
-		foreach (Transform minion in spawnedList) {
-			minion.GetComponent<GeneralAI>().StartObject();
-		}
 	}
 	#endregion
 }
