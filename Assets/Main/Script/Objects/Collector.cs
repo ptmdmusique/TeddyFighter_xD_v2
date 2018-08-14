@@ -18,7 +18,6 @@ public class Collector : MonoBehaviour
             }
         }
     }
-
     private void Awake()
     {
         if (clearWhenStart == true) {

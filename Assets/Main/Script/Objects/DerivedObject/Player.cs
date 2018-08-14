@@ -94,6 +94,10 @@ public class Player : Shooter {
 			script.Collected();
 		}
 	}
+	private void OnDisable()
+	{
+		myRb.velocity = Vector3.zero;
+	}
 	#endregion
 
 	#region Action
