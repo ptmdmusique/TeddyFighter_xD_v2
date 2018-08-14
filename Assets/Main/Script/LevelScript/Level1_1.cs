@@ -7,7 +7,7 @@ public class Level1_1 : LevelScript {
 	public override IEnumerator LevelEvent()
 	{
 		switch (curCheckpoint) {
-			case 1:
+			case 0:
 				if (needToUpdateCheckpoint == true) {
 					//Did we move up a checkpoint but haven't updated the goal?
 					enemyList[0].chance = 30;       //Asteroid
@@ -22,9 +22,18 @@ public class Level1_1 : LevelScript {
 				}
 				break;
 
-			case 2:
-				if (player.dataFragment >= 300) {
+			case 1:
+				if (player.dataFragment >= 400) {
 					//End game
+						//Disable player control
+					player.enabled = false;
+					player.GetComponent<RotateToMouse>().enabled = false;
+
+					//Play the cinematic
+					endScene.Play();
+					
+					//Stop all spawning coroutine
+					StopAllCoroutines();
 				}
 				break;
 		}

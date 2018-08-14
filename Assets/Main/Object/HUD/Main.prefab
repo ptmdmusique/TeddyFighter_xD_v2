@@ -643,21 +643,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1304691269544548
-GameObject:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4942467039776026}
-  m_Layer: 0
-  m_Name: LevelScript
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1305791401287402
 GameObject:
   m_ObjectHideFlags: 1
@@ -2453,7 +2438,7 @@ Transform:
   m_Children:
   - {fileID: 4726225793091048}
   m_Father: {fileID: 4191484251688978}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4128514571330066
 Transform:
@@ -2529,7 +2514,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4191484251688978}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4191124151401388
 Transform:
@@ -2564,7 +2549,6 @@ Transform:
   - {fileID: 4279757723492858}
   - {fileID: 4408327495343970}
   - {fileID: 4037340952939274}
-  - {fileID: 4942467039776026}
   - {fileID: 4836483507636184}
   - {fileID: 4079699833561398}
   - {fileID: 4904356762593980}
@@ -3209,7 +3193,7 @@ Transform:
   - {fileID: 4128514571330066}
   - {fileID: 4770413641267008}
   m_Father: {fileID: 4191484251688978}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4841003799881530
 Transform:
@@ -3291,7 +3275,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4191484251688978}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4909153963271906
 Transform:
@@ -3335,19 +3319,6 @@ Transform:
   - {fileID: 4912860671600170}
   m_Father: {fileID: 4559890620690138}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4942467039776026
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1304691269544548}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4191484251688978}
-  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4943418074667216
 Transform:
@@ -5460,11 +5431,11 @@ MonoBehaviour:
     lineCount: 4
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -6549,15 +6520,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyList:
   - minion: {fileID: 4945237342197624, guid: 42d3fd2d723d0d341ac5b461727928d3, type: 2}
-    chance: 70
+    chance: 40
   - minion: {fileID: 4679811670093068, guid: a605a0fc64387fc42aa2526d7b6e42e4, type: 2}
-    chance: 30
+    chance: 10
   startGame: {fileID: 0}
   endScene: {fileID: 0}
   enemySpawnLocation: {fileID: 4408327495343970}
   allySpawnLocation: {fileID: 4037340952939274}
   player: {fileID: 0}
-  spawnWait: 0.5
+  spawnWait: 0.2
 --- !u!114 &114506962849689722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7588,7 +7559,7 @@ MonoBehaviour:
         m_MethodName: FlipScriptEnable
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 114543497303243996}
+          m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.MonoBehaviour, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -7599,7 +7570,7 @@ MonoBehaviour:
         m_MethodName: FlipScriptEnable
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 114807733251181316}
+          m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.MonoBehaviour, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -106549,7 +106520,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -212, y: 352.99994}
+  m_AnchoredPosition: {x: -212, y: 353}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224711877846648632
@@ -106996,9 +106967,9 @@ PlayableDirector:
   - key: {fileID: 114598356862399718, guid: 7a5fab8d283dc3d4297a1ac654ef887f, type: 2}
     value: {fileID: 95933177570095826}
   - key: {fileID: 114933490738430094, guid: 7a5fab8d283dc3d4297a1ac654ef887f, type: 2}
-    value: {fileID: 1512367784172550}
+    value: {fileID: 0}
   - key: {fileID: 114148824136252598, guid: 7a5fab8d283dc3d4297a1ac654ef887f, type: 2}
-    value: {fileID: 95217571013015376}
+    value: {fileID: 0}
   - key: {fileID: 114533444596116420, guid: 7a5fab8d283dc3d4297a1ac654ef887f, type: 2}
     value: {fileID: 1881870114828590}
   - key: {fileID: 0}
