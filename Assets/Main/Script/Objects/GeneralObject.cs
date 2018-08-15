@@ -172,6 +172,7 @@ public class GeneralObject : MonoBehaviour {
         CreateExplosion();
         if (tag == "Enemy" && GetComponent<Projectile>() == null) {
             StaticGlobal.GetPlayer().GetComponent<Player>().ChangeScore(myScore);
+			Manager.enemyKilled++;		//Increase number of enemies killed
         }
 
         if (aoeRadius > 0) {
