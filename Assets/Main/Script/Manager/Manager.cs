@@ -84,7 +84,10 @@ public class Manager : MonoBehaviour {
 	{
 		//Wait until player press submit to go out
 		yield return new WaitUntil(() => Input.GetButtonDown("Submit") == true);
-		introOutro.DOFade(1, 2);
+		
+		if (introOutro != null) {
+			introOutro.DOFade(1, 2);	
+		}
 
 		//Load new scene
 	}

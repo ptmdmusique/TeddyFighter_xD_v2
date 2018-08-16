@@ -7,6 +7,7 @@ public abstract class LevelScript : MonoBehaviour {
 
 	[Header("Level info")]
 	public List<MinionInfo> enemyList;
+	public List<FormationInfo> formationList;
 	public PlayableDirector startGame;
 	public PlayableDirector endScene;
 	public Transform enemySpawnLocation;
@@ -30,6 +31,23 @@ public abstract class LevelScript : MonoBehaviour {
 	{
 		public Transform minion;
 		public int chance;
+	}
+	[System.Serializable]
+	public class FormationInfo
+	{
+		[Header("Formation Info")]
+		public Formation formation;
+		public int chance;
+		public float pathTime = 1;
+
+		[System.Serializable]
+		public class Minion
+		{
+			public Transform minion;
+			public int numberOfMinion = 1;
+		}
+		[Header("Minion Info")]
+		public List<Minion> minionList;		
 	}
 
 	#region Default
@@ -75,7 +93,14 @@ public abstract class LevelScript : MonoBehaviour {
 	public IEnumerator SpawnFormation()
 	{
 		yield return new WaitUntil(() => isWaiting == false);            //Temporarily stop the coroutine if necessary
-
+		foreach(FormationInfo info in formationList) {
+			int chance = Random.Range(0, 100);
+			if (chance < info.chance) {
+				//If the randomized chance is correct then spawn it
+				Vector2 spawnPos = new Vector2(Random.Range(-screenWidth / 2.0f, screenWidth / 2.0f) * 0.8f, enemySpawnLocation.position.y);
+				
+			}
+		}
 		//TODO: Need to work on this
 		yield return new WaitForSeconds(spawnWait);
 		spawnFormationCoroutine = StartCoroutine(SpawnFormation());

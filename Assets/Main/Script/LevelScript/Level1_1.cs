@@ -26,10 +26,6 @@ public class Level1_1 : LevelScript {
 				//Collecteed 400 data fragments and has played more than 1 min
 				if (player.dataFragment >= 400 && Manager.timer > 60) {
 					//End game
-						//Disable player control
-
-					player.enabled = false;
-					player.GetComponent<RotateToMouse>().enabled = false;
 
 					//Play the cinematic
 					endScene.Play();

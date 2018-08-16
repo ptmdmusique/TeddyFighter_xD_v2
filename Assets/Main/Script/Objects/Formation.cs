@@ -66,13 +66,6 @@ public class Formation : MonoBehaviour {
 			lookAtTarget = GameObject.Find("Player").transform;
 		}
 	}
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.K)) {
-			SummonFormation(transform.position);
-		}
-	}
-
 	#region Resetting stuff
 	public void SetZToZero()
 	{
