@@ -29,8 +29,7 @@ static class StaticGlobal {
 	}
 	static public Vector3 RotateVectorByAmount_2D(float angle, Vector3 originalVector)
 	{
-		return Quaternion.Euler(0, 0, 
-			angle) * originalVector;
+		return Quaternion.Euler(0, 0, angle) * originalVector;
 	}
 	#endregion
 

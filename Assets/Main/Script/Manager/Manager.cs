@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class Manager : MonoBehaviour {
 	//Singleton stats
 	public static int enemyKilled = 0;
-	public static float timePassed = 0;
+	public static float timer = 0;
 
 	//Report panel
 	[SerializeField] private TextMeshProUGUI enemyKilledText;
 	[SerializeField] private TextMeshProUGUI datafragText;
 	[SerializeField] private TextMeshProUGUI scoreText;
 	[SerializeField] private TextMeshProUGUI timeText;
+	[SerializeField] private Image introOutro; 
 
 	//Singleton
 	private static Manager instance;
@@ -38,6 +41,10 @@ public class Manager : MonoBehaviour {
 
 		player = StaticGlobal.GetPlayer().GetComponent<Player>();
 	}
+	private void Update()
+	{
+		timer += Time.deltaTime;
+	}
 	#endregion
 
 	#region Actions
@@ -62,9 +69,27 @@ public class Manager : MonoBehaviour {
 	{
 		//Set up the report panel
 		enemyKilledText.text = enemyKilled.ToString();
-		timeText.text = timePassed.ToString();
+
+		string minutes = Mathf.Floor(timer / 60).ToString("00");
+		string seconds = (timer % 60).ToString("00");
+		string niceTime = string.Format("{0:00}:{1:00}", minutes, seconds);
+		timeText.text = niceTime;
+
 		datafragText.text = player.dataFragment.ToString();
 		scoreText.text = player.score.ToString();
+
+		StartCoroutine(StartEndGame());
+	}
+	public IEnumerator StartEndGame()
+	{
+		//Wait until player press submit to go out
+		yield return new WaitUntil(() => Input.GetButtonDown("Submit") == true);
+		introOutro.DOFade(1, 2);
+
+		//Load new scene
 	}
 	#endregion
+
+
+	//TODO: Work on save and load
 }

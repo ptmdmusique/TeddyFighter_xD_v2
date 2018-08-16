@@ -20,7 +20,6 @@ public class Shooter : GeneralObject {
 
     //Basic info
     [HideInInspector] public Transform myTarget;
-    [HideInInspector] public Vector2 targetVector;
 
 	#region Default
 	protected override void Awake()
@@ -37,13 +36,6 @@ public class Shooter : GeneralObject {
         if (weaponList.Count > 0 && allInactive == true) {
             weaponList[0].isActive = true;
         }
-
-        if (tag == "Enemy") {
-            targetVector = Vector2.down;
-        } else {
-            targetVector = Vector2.up;
-        }
-        UpdateTarget(targetVector);
     }
 	#endregion
 
@@ -60,7 +52,7 @@ public class Shooter : GeneralObject {
             foreach (WeaponList weapon in weaponList) {
                 Weapon curGun = weapon.myWeapon;
                 if (canAttack == true && curGun != null) {
-                    bool temp = curGun.StartShooting(target, 0);
+                    bool temp = curGun.StartShooting(0);
                     didShoot = temp == true ? temp : false;
                 }
             }
@@ -69,7 +61,7 @@ public class Shooter : GeneralObject {
             //Shoot only the specified gun
             Weapon curGun = weaponList[indx].myWeapon;
             if (canAttack == true && curGun != null) {
-                return curGun.StartShooting(target, 0);
+                return curGun.StartShooting(0);
             }
         }
         return false;
@@ -104,7 +96,7 @@ public class Shooter : GeneralObject {
             }
         }
     }
-    public void UpdateTarget(Vector2 newTarget)
+    public void UpdateTarget(Transform newTarget)
     {
         foreach (WeaponList weaponElement in weaponList) {
 			if (weaponElement != null) { 

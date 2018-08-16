@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour {
     public Transform nozzle;        //Will be used to calculate the firing vector
 
 	//Audio
-	private AudioSource mAudioSource;
+	protected AudioSource mAudioSource;
 
     //Basic info
     public bool ableToShoot = false;
@@ -51,7 +51,6 @@ public class Weapon : MonoBehaviour {
     protected float rageCost = 0;
     protected Coroutine shooting;
     public Transform myTarget;
-    protected Vector2 targetVector;
     protected Vector2 gunToNozzle;
     protected Vector2 curAutoShoot;
 
@@ -68,15 +67,6 @@ public class Weapon : MonoBehaviour {
 		curBullet = bulletList[0];
         //Applying target
         gunToNozzle = nozzle.position - transform.position;
-        if (myTarget == null) {
-            targetVector = gunToNozzle;
-            myTarget = nozzle;
-        } else {
-            targetVector = myTarget.position - transform.position;
-        }
-
-        //Start checking 
-        StartCoroutine(UpdateTargetRoutine());
 
 		mAudioSource = GetComponent<AudioSource>();
     }
@@ -84,15 +74,15 @@ public class Weapon : MonoBehaviour {
 
 	#region Action
 	//Shooting
-	public virtual void FireBullet(Vector2 target)
+	public virtual void FireBullet()
     {
 		if (curBullet.canBeUsed == false) {
 			return;
 		}
 
-		if (target == Vector2.zero) {
-			target = gunToNozzle;
-		}
+		gunToNozzle = nozzle.position - transform.position;
+		Vector2 target = myTarget == null ? gunToNozzle : (Vector2) (myTarget.position - transform.position).normalized;
+
 		//Launch == 0: Just fire, constant velocity
 		//Pulse  == 1: Push bullet out
 
@@ -132,11 +122,11 @@ public class Weapon : MonoBehaviour {
 			mAudioSource.Play();
 		}
 	}
-    public virtual IEnumerator Shoot(Vector2 target)
+    public virtual IEnumerator Shoot()
     {
         for (int indx = 0; indx < curBullet.numberOfWave; indx++) {
             for (int indx2 = 0; indx2 < curBullet.bulletPerWave; indx2++) {
-                FireBullet(target);
+                FireBullet();
                 if ((indx2 + 1) % curBullet.bulletBeforeWait == 0) {
                     yield return new WaitForSeconds(curBullet.waitDuringWave);
                 }
@@ -147,12 +137,11 @@ public class Weapon : MonoBehaviour {
         yield return new WaitForSeconds(1.0f / curBullet.fireRate);
         shooting = null;
     }
-    public virtual IEnumerator AutoShoot(Vector2 target)
+    public virtual IEnumerator AutoShoot()
     {
-        curAutoShoot = target;
         for (int indx = 0; indx < curBullet.numberOfWave; indx++) {
             for (int indx2 = 0; indx2 < curBullet.bulletPerWave; indx2++) {
-                FireBullet(target);
+                FireBullet();
                 if ((indx2 + 1) % curBullet.bulletBeforeWait == 0) {
                     yield return new WaitForSeconds(curBullet.waitDuringWave);
                 }
@@ -162,22 +151,21 @@ public class Weapon : MonoBehaviour {
 
         yield return new WaitForSeconds(1.0f / curBullet.fireRate);
         //Shoot again
-        shooting = StartCoroutine(AutoShoot(target));
+        shooting = StartCoroutine(AutoShoot());
     }   //Auto firing through time
-    public virtual bool StartShooting(Vector2 target, float delay = 0)
+    public virtual bool StartShooting(float delay = 0)
     {
         if (shooting != null) {
             rageCost = 0;               //Return if we are already shooting. Reset the rage cost so that we don't reduce the rage 
             return false;
         }
 
-        targetVector = target;
         rageCost = curBullet.rageCost;
 
         if (autoShoot == true) {
-            shooting = StartCoroutine(AutoShoot(target));
+            shooting = StartCoroutine(AutoShoot());
         } else {
-            shooting = StartCoroutine(Shoot(target));
+            shooting = StartCoroutine(Shoot());
         }
 
         return true;
@@ -192,30 +180,12 @@ public class Weapon : MonoBehaviour {
     {
         StopShooting();
         yield return new WaitForSeconds(delay);
-        StartShooting(curAutoShoot);
+        StartShooting();
     }
-        //Target
-    public void UpdateTarget(Transform newTarget)         //Need to work on rotation of the nozzle
-    {
-        if (newTarget == null) {
-            myTarget = nozzle;
-        } else {
-            myTarget = newTarget;
-        }
-        targetVector = newTarget.position - transform.position;
-    }
-    public void UpdateTarget(Vector2 newTarget)            
-    {
-        targetVector = newTarget;
-		gunToNozzle = nozzle.position - transform.position;  //Update nozzle position
+	public void UpdateTarget(Transform newTarget)
+	{
+		myTarget = newTarget;
 	}
-    protected IEnumerator UpdateTargetRoutine()
-    {
-		gunToNozzle = nozzle.position - transform.position;  //Update nozzle position
-        UpdateTarget(myTarget);
-        yield return new WaitForSeconds(Time.deltaTime);
-        StartCoroutine(UpdateTargetRoutine());
-    }
         //Bullet
     public virtual int NextBullet()
     {

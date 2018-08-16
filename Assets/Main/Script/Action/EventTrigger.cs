@@ -26,9 +26,5 @@ public class EventTrigger : MonoBehaviour {
 			Destroy(destroyObject);
 		}
 	}
-	public void FlipScriptEnable(MonoBehaviour script)
-	{
-		script.enabled = !script.enabled;
-	}
 	#endregion
 }

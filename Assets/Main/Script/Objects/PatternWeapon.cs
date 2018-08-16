@@ -33,17 +33,67 @@ public class PatternWeapon : Weapon {
 		curPattern = patternInfo[0];
 	}
 
-	public override IEnumerator Shoot(Vector2 target)
+	public virtual void FireBullet(Vector2 target)
 	{
-		for(int curWave = 0; curWave < curBullet.numberOfWave; curWave++) {
+		if (curBullet.canBeUsed == false) {
+			return;
+		}
+
+		target = target == Vector2.zero ? gunToNozzle : target;
+
+		//Launch == 0: Just fire, constant velocity
+		//Pulse  == 1: Push bullet out
+
+		Transform bullet = Instantiate(curBullet.bullet, transform.position, Quaternion.identity);
+		Projectile script = bullet.GetComponent<Projectile>();
+		script.tag = tag;
+
+		//Update with custom parameter
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.myDamage, curBullet.damage * (powerupLevel * 0.2f + 1), -1);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.myRageReward, curBullet.rageReward, -1);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.lifeTime, curBullet.lifeTime, -1);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.aoeRadius, curBullet.aoeRadius, 0);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.aoePercentage, curBullet.aoePercentage, 0);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.fasterDuration, curBullet.fasterDuration, -1);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.fasterMax, curBullet.fasterMax, -1);
+		StaticGlobal.ChangeIfNotEqual<float>(ref script.mySpeed, curBullet.bulletSpeed, -1);
+
+		if (powerupLevel > 0) {
+			//Deploy the effect
+			Transform newPS = Instantiate(powerupPS, bullet.position, Quaternion.identity);
+			vfxMaster.AddChild(newPS);
+
+			newPS.GetComponent<FollowTarget>().target = bullet;
+		}
+
+		script.tag = tag;
+		script.gameObject.layer = gameObject.layer;
+		bulletMaster.AddChild(bullet);
+
+		script.Launch(target, curBullet.bulletSpeed, 1);
+		if (curBullet.fasterMax > -1 && curBullet.fasterDuration > -1) {
+			script.FasterThroughTime();
+		}
+
+		//Play the audio
+		if (mAudioSource != null) {
+			mAudioSource.Play();
+		}
+	}
+	public override IEnumerator Shoot()
+	{
+
+		for (int curWave = 0; curWave < curBullet.numberOfWave; curWave++) {
+			gunToNozzle = nozzle.position - transform.position;
+			Vector2 target = myTarget == null ? gunToNozzle : (Vector2)(myTarget.position - transform.position).normalized;
+
 			if (curBullet.bulletPerWave > 1) {
 				//Evenly distribute the bullet
 				float step = (curPattern.endAngle - curPattern.startAngle) / (curBullet.bulletPerWave - 1) * (curPattern.rightToLeft == false ? -1 : 1);
 				//Get to the initial position
 				//Evenly distribute the bullet
 				Vector2 curTarget = StaticGlobal.RotateVectorByAmount_2D
-					(curPattern.angleOffset + (curPattern.rightToLeft == false ? 1 : -1) * (curPattern.endAngle - curPattern.startAngle) / 2.0f,
-					target == Vector2.zero ? gunToNozzle : target);
+					(curPattern.angleOffset + (curPattern.rightToLeft == false ? 1 : -1) * (curPattern.endAngle - curPattern.startAngle) / 2.0f, target);
 				for (int shotBullet = 0; shotBullet < curBullet.bulletPerWave; shotBullet++) {
 					if (curPattern.myType == WeaponPattern.FullArc ||
 						(curPattern.myType == WeaponPattern.Even && shotBullet % 2 == 0 || curBullet.bulletPerWave == 1) ||
@@ -55,7 +105,7 @@ public class PatternWeapon : Weapon {
 
 					//Rotate
 					curTarget = StaticGlobal.RotateVectorByAmount_2D(step, curTarget);
-
+					
 					//Should we wait?
 					if ((shotBullet + 1) % curBullet.bulletBeforeWait == 0) {
 						yield return new WaitForSeconds(curBullet.waitDuringWave);
@@ -87,7 +137,6 @@ public class PatternWeapon : Weapon {
 		}
 		return curIndx;
 	}
-
 	public override int NextBullet(int indx)
 	{
 		curBullet = bulletList[Mathf.Min(indx, bulletList.Count - 1)];
@@ -98,4 +147,4 @@ public class PatternWeapon : Weapon {
 		}
 		return bulletList.IndexOf(curBullet);
 	}
-}
+}	
