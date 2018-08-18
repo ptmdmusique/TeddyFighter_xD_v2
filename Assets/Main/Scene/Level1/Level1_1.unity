@@ -323,6 +323,7 @@ MonoBehaviour:
     numberOfMinion: 3
   waitBetweenSpawn: 0.2
   pathTime: 5
+  minionFollowVShape: 0
   wayPoints: []
   closedPath: 0
   pathMirrorType: 0
