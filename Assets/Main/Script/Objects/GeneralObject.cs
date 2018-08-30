@@ -171,7 +171,13 @@ public class GeneralObject : MonoBehaviour {
     {
         CreateExplosion();
         if (tag == "Enemy" && GetComponent<Projectile>() == null) {
-            StaticGlobal.GetPlayer().GetComponent<Player>().ChangeScore(myScore);
+			Transform player = StaticGlobal.GetPlayer();
+			if (player != null) {
+				Player playerComponent = player.GetComponent<Player>();
+				if (playerComponent.isAlive == true) {
+					playerComponent.ChangeScore(myScore);
+				}
+			}
 			Manager.enemyKilled++;		//Increase number of enemies killed
         }
 
@@ -179,8 +185,8 @@ public class GeneralObject : MonoBehaviour {
             Collider2D[] withinRadius = Physics2D.OverlapCircleAll(transform.position, aoeRadius);
             foreach (Collider2D collider in withinRadius) {
                 GeneralObject otherScript = collider.GetComponent<GeneralObject>();
-                if (((tag == "Ally" || tag == "Player") && (collider.tag == "enemy")) &&
-                    ((collider.tag == "Ally" || collider.tag == "Player") && (tag == "enemy"))) {
+                if (((tag == "Ally" || tag == "Player") && (collider.tag == "Enemy")) ||
+                    ((collider.tag == "Ally" || collider.tag == "Player") && (tag == "Enemy"))) {
                     if (otherScript.isInvincible == false) {
                         otherScript.ChangeHealth(-myDamage * aoePercentage);
                     }

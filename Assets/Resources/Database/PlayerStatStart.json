@@ -1,0 +1,11 @@
+{
+  "mySpeed": 25.0,
+  "isInvincible": false,
+  "damage": 500.0,
+  "canAttack": true,
+  "maxHealth": 200.0,
+  "maxRage": 200.0,
+  "shieldRageRate": 5.0,
+  "shieldDepleteTime": 0.5,
+  "dataFragment": 0
+}

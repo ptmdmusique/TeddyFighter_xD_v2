@@ -1,18 +1,1 @@
-[
-  {
-    "isActive": true
-  },
-  {
-    "isActive": false
-  },
-  {
-    "isActive": false
-  },
-  {
-    "isActive": false
-  },
-  {
-    "isActive": false
-  }
-]
-
+[{"isActive":true},{"isActive":true},{"isActive":true},{"isActive":true},{"isActive":false}]

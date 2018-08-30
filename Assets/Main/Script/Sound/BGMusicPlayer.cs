@@ -70,7 +70,8 @@ public class BGMusicPlayer : MonoBehaviour
 		}
 
 		if (musicName != null) {
-			musicName.text = myAudioSource.clip.name;
+			musicName.enabled = true;
+			musicName.text = "Music: " + myAudioSource.clip.name;
 			//Fading stuff
 			musicName.DOFade(1, 1).OnComplete(
 				() => musicName.DOFade(0, 1).SetDelay(2));

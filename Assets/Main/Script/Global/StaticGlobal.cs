@@ -13,8 +13,12 @@ static class StaticGlobal {
 	#region Player
 	public static Transform GetPlayer()
     {
-        return GameObject.Find("Player").transform;
-    }
+		GameObject returnGameObject = GameObject.Find("Player");
+		if (returnGameObject != null) {
+			return returnGameObject.transform;
+		}
+		return null;
+	}
 	#endregion
 
 	#region Math

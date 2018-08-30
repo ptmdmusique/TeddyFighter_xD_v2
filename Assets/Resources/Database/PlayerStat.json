@@ -1,17 +1,1 @@
-{
-  "maxHealth": 100,
-  "curHealth": 100,
-  "maxRage": 100,
-  "curRage": 100,
-
-  "mySpeed": 15,
-  "isInvicible": 0,
-  "damage": 500,
-  "canAttack": 1,
-
-  "shieldRageRate": 5,
-  "shieldDepleteTime": 0.2,
-
-  "dataFragment": 0,
-  "score":  0
-}
+{"mySpeed":25.0,"isInvincible":false,"damage":500.0,"canAttack":true,"maxHealth":200.0,"maxRage":200.0,"shieldRageRate":5.0,"shieldDepleteTime":0.5,"dataFragment":815.0}

@@ -7,9 +7,10 @@ public class Player : Shooter {
 
 	//Basic info
 	//Rage
-	[Header("Basic stats")]
+	[Header("Basic info")]
 	public float maxRage = 0;
 	public float curRage;
+	[HideInInspector] public bool isPausing = false;
 	[Header("Powerup")]
 	public int curPowerUp = 0;
 	public int maxPowerUp = 5;
@@ -24,7 +25,8 @@ public class Player : Shooter {
 	//Misc
 	[HideInInspector] public float dataFragment = 0;
 	[HideInInspector] public float score = 0 ;
-    [Header("Status bars + Icons")]
+	[HideInInspector] public bool isAlive = true;
+    [Header("Status bars + Icons + Events")]
     [SerializeField] private StatusIndicator myHealthSI;
     [SerializeField] private StatusIndicator myRageSI;
     [SerializeField] private StatusIndicator dataFragmentSI;
@@ -34,6 +36,7 @@ public class Player : Shooter {
 	[SerializeField] private WeaponIcon singleIcon;
     [SerializeField] private WeaponIcon multiIcon;
     [SerializeField] private WeaponIcon ultiIcon;
+	[SerializeField] private GameObject dieEvent;
 
     [Header("Shield")]
     public Transform myShield;
@@ -178,6 +181,16 @@ public class Player : Shooter {
 
 		powerupCoroutine = null;
 	}
+	public override void Die()
+	{
+		//TODO: Saving and loading
+		CreateExplosion();
+		gameObject.SetActive(false);
+		isAlive = false;
+
+		dieEvent.SetActive(true);
+	}
+
 	#endregion
 
 	#region Input
@@ -252,6 +265,12 @@ public class Player : Shooter {
     }
     private void InputController()
     {
+		if (isPausing == true)
+		{
+			//Prevent player from controlling the ship when pausing
+			return;
+		}
+
         ChangeBulletInput();
         FireInput();
         ShieldInput();

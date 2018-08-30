@@ -35,13 +35,17 @@ public class Formation : MonoBehaviour {
 	public float waitBetweenSpawn = 0.5f;
 	public float pathTime = 3;
 	public bool minionFollowVShape = false;
+	public float vDistance = 4;
+
 	[Header("Path info")]
-	public List<Vector3> wayPoints;
 	public bool closedPath = false;
 	public MirrorType pathMirrorType = MirrorType.None;
 	public bool loop = false;
 	public PathType pathType = PathType.CatmullRom;
 	public bool downward = true;
+	protected DOTweenPath pathScript;
+	[HideInInspector] public List<Vector3> wayPoints;
+
 	[Header("Target stuff")]
 	public Orientation pathOrientation;
 	public Transform lookAtTarget = null;
@@ -49,17 +53,16 @@ public class Formation : MonoBehaviour {
 	public Vector3 lookAtPosition = Vector3.zero;
 
 	[Header("Transform info")]
-	private Collector objectCollector;
+	protected Collector objectCollector;
 
-	//private Vector3[] truePath;
-	//private Vector3[] mirroredPath;
-
-	// Use this for initialization
+	#region Default
 	private void Awake()
 	{
 		objectCollector = GameObject.Find("Object_Collector").GetComponent<Collector>();
-		wayPoints = GetComponent<DOTweenPath>().wps;
-		wayPoints.Insert(0, transform.position);
+
+		pathScript = GetComponent<DOTweenPath>();
+		wayPoints = pathScript.wps;
+		//wayPoints.Insert(0, transform.position);
 	}
 	public void Start()
 	{
@@ -67,15 +70,10 @@ public class Formation : MonoBehaviour {
 			lookAtTarget = GameObject.Find("Player").transform;
 		}
 	}
-	#region Resetting stuff
-	public void SetZToZero()
+	private void Update()
 	{
-		if (wayPoints.Count <= 0) {
-			return;
-		}
-
-		for (int indx = 0; indx < wayPoints.Count; indx++) {
-			wayPoints[indx] = new Vector3 (wayPoints[indx].x, wayPoints[indx].y, 0);
+		if (Input.GetKeyDown(KeyCode.K) == true) {
+			SummonFormation(transform.position);
 		}
 	}
 	#endregion
@@ -133,26 +131,50 @@ public class Formation : MonoBehaviour {
 					objectCollector.AddChild(spawnedObject);
 					spawnedObject.GetComponent<GeneralAI>().followFormation = true;
 
-					DoPath(spawnedObject, path);
+					DoPath(spawnedObject, SetupPath(center, path));
 					yield return new WaitForSeconds(waitBetweenSpawn);
 				}
 			}
 		} else {
+			//If summon in formation first then there is no delay between each summon
+
 			//Summon the boss first
 			Transform spawnedObject = Instantiate(minionList[0].minion, center, Quaternion.identity);
 			objectCollector.AddChild(spawnedObject);
 			spawnedObject.GetComponent<GeneralAI>().followFormation = true;
 
-			DoPath(spawnedObject, path);
-			yield return new WaitForSeconds(waitBetweenSpawn);
+			DoPath(spawnedObject, SetupPath(center, path));
+			//yield return new WaitForSeconds(waitBetweenSpawn);
+
+			float rotation = spawnedObject.eulerAngles.z;			//Get the rotation vector of the boss
+			Vector3 dirVector = Vector3.down;                       //This is the original translational vector that we will use to locate the spawn line (beneath the boss)
+			//We then need to rotate it to find the true vector
+			dirVector = StaticGlobal.RotateVectorByAmount_2D(rotation, dirVector) * vDistance;
+			//This is the vector that determines distance from the center of the spawning line, act as the speration of each minion
+			Vector3 distanceVector = Vector3.left * vDistance;      //Also act as a step for each increment 
+			//Rotate that to find the true vector too
+			distanceVector = StaticGlobal.RotateVectorByAmount_2D(rotation, distanceVector);
+
+			//The center of the first lane
+			Vector3 laneCenter = center + dirVector;
 
 			//Then summon the rest of them
 			for(int indx = 1; indx < minionList.Count; indx++) {
 				Minion minion = minionList[indx];
-				Vector3 spawnPos = center + ;
-				spawnedObject = Instantiate(minion.minion, spawnPos, Quaternion.identity);
-				objectCollector.AddChild(spawnedObject);
-				spawnedObject.GetComponent<GeneralAI>().followFormation = true;
+				Vector3 spawnPos = laneCenter - distanceVector * (minion.numberOfMinion - 1) / 2.0f;	
+
+				for(int indx2 = 0; indx2 < minion.numberOfMinion; indx2++) {
+					spawnedObject = Instantiate(minion.minion, spawnPos, Quaternion.identity);
+					objectCollector.AddChild(spawnedObject);
+					spawnedObject.GetComponent<GeneralAI>().followFormation = true;
+					DoPath(spawnedObject, SetupPath(spawnedObject.position, path));								//Re-set up the path
+
+					//Move on to the next position in lane
+					spawnPos += distanceVector;
+				}
+
+				//Move on to the next lane
+				laneCenter += dirVector;
 			}
 		}
 	}
@@ -166,80 +188,64 @@ public class Formation : MonoBehaviour {
 		target.eulerAngles = targetRotation;
 	}
 	public void DoPath(Transform spawnedObject, Vector3[] path)	{
-		DOTweenPath script = spawnedObject.gameObject.AddComponent<DOTweenPath>();
-		script.hasOnComplete = true;
-		script.onComplete.AddListener(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero));
-		script.loops = loop == true ? -1 : 1;
-		script.wps.AddRange(path);
-		script.isClosedPath = closedPath;
-
 		switch (pathOrientation) {
 			case Orientation.ToPath:
-				script.orientType = DG.Tweening.Plugins.Options.OrientType.ToPath;
+				spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
+					.SetOptions(closedPath)
+					.SetLookAt(lookAhead, Vector3.forward, Vector3.right)
+					.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
+					.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
+					;
 				break;
+
 			case Orientation.LookAtPosition:
-				script.orientType = DG.Tweening.Plugins.Options.OrientType.LookAtPosition;
-				script.lookAtPosition = lookAtPosition;
+				spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
+					.SetOptions(closedPath)
+					.SetLookAt(lookAtPosition)
+					.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
+					.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
+					;
 				break;
+
 			case Orientation.LookAtTarget:
-				script.orientType = DG.Tweening.Plugins.Options.OrientType.LookAtTransform;
-				script.lookAtTransform = lookAtTarget;
+				spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
+					.SetOptions(closedPath)
+					.SetLookAt(lookAtTarget)
+					.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
+					.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
+					;
 				break;
+
 			case Orientation.None:
-				script.orientType = DG.Tweening.Plugins.Options.OrientType.None;
+				Vector3 targetRotation = spawnedObject.eulerAngles;
+				targetRotation.z = 0;
+				if (downward == true) {
+					targetRotation.z = 180;
+				}
+
+				spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
+					.SetOptions(closedPath)
+					.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
+					.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
+				;
+
+				//Rotate afterward  -   Add a delay before rotation to override the look rotation of the tween
+				StartCoroutine(RotateObjectWithDelay(spawnedObject, targetRotation, 0.00001f));
 				break;
 		}
+	}
+	protected Vector3[] SetupPath(Vector3 center, Vector3[] originalPath)
+	{
+		//Set up the path relative to the center
+		Vector3[] returnPath = new Vector3[originalPath.Length];
 
-		script.DOPlay();
-		//switch (pathOrientation) {
-		//	case Orientation.ToPath:
-		//		spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
-		//			.SetOptions(closedPath)
-		//			.SetEase(Ease.Linear)
-		//			.SetLookAt(lookAhead, Vector3.forward, Vector3.right)
-		//			.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
-		//			.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
-		//			;
-		//		break;
+		returnPath[0] = center;		//Offset the first waypoint
+		for (int indx = 1; indx < returnPath.Length; indx++) {
+			//The current waypoint is the previous waypoint translated by the difference among the original wps
+			returnPath[indx] = returnPath[indx - 1] + (originalPath[indx] - originalPath[indx - 1]);
+		}
 
-		//	case Orientation.LookAtPosition:
-		//		spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
-		//			.SetOptions(closedPath)
-		//			.SetEase(Ease.Linear)
-		//			.SetLookAt(lookAtPosition)
-		//			.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
-		//			.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
-		//			;
-		//		break;
-
-		//	case Orientation.LookAtTarget:
-		//		spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
-		//			.SetOptions(closedPath)
-		//			.SetEase(Ease.Linear)
-		//			.SetLookAt(lookAtTarget)
-		//			.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
-		//			.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
-		//			;
-		//		break;
-
-		//	case Orientation.None:
-		//		Vector3 targetRotation = spawnedObject.eulerAngles;
-		//		targetRotation.z = 0;
-		//		if (downward == true) {
-		//			targetRotation.z = 180;
-		//		}
-
-		//		spawnedObject.DOPath(path, pathTime, pathType, PathMode.TopDown2D)
-		//			.SetOptions(closedPath)
-		//			.SetEase(Ease.Linear)
-		//			.OnComplete(() => spawnedObject.GetComponent<GeneralAI>().StartObject(Vector3.zero))
-		//			.SetLoops(loop == true ? -1 : 1, LoopType.Yoyo) //Loop to inifinity and beyond!
-		//		;
-
-		//		//Rotate afterward  -   Add a delay before rotation to override the look rotation of the tween
-		//		StartCoroutine(RotateObjectWithDelay(spawnedObject, targetRotation, 0.00001f));
-		//		break;
-		//}
+		return returnPath;
 	}
 	#endregion
 }

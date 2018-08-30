@@ -10,10 +10,12 @@ public class PlayerWeaponJson : JsonManager
 	[Header("Json getter")]
 	private string bulletPath;
 	private string weaponPath;
+	private string bulletName = "PlayerBullet";
+	private string weaponName = "PlayerWeapon";
 
 	[Header("Member to get")]
 	private List<Bullet> bulletList;
-	private List<bool> weaponActiveList;
+	private List<Active> weaponActiveList;
 
 	// Use this for initialization
 	#region Default
@@ -21,12 +23,12 @@ public class PlayerWeaponJson : JsonManager
 		base.Awake();
 
 		//Set the path
-		bulletPath = "Assets/Resources/Database/PlayerBullet.json";
-		weaponPath = "Assets/Resources/Database/PlayerWeapon.json";
+		bulletPath = "Assets/Resources/Database/" + bulletName + ".json";
+		weaponPath = "Assets/Resources/Database/" + weaponName + ".json";
 
 		//Get the list from the database
-		bulletList = JsonConvert.DeserializeObject<List<Bullet>>(Resources.Load<TextAsset>("Database/PlayerBullet").ToString());
-		weaponActiveList = JsonConvert.DeserializeObject<List<bool>>(Resources.Load<TextAsset>("Database/PlayerWeapon").ToString());
+		bulletList = JsonConvert.DeserializeObject<List<Bullet>>(Resources.Load<TextAsset>(shortPath + bulletName).ToString());
+		weaponActiveList = JsonConvert.DeserializeObject<List<Active>>(Resources.Load<TextAsset>(shortPath + weaponName).ToString());
 	}
 	#endregion
 
@@ -53,8 +55,10 @@ public class PlayerWeaponJson : JsonManager
 				curBulletList[indx2].fasterDuration = bulletList[indx2].fasterDuration;
 			}
 
-			player.weaponList[indx].isActive = weaponActiveList[indx];
+			player.weaponList[indx].isActive = weaponActiveList[indx].isActive;
 		}
+
+		//TODO: Work on pattern and ultimate weapon
 	}
 	public override void Save()
 	{
@@ -78,7 +82,7 @@ public class PlayerWeaponJson : JsonManager
 				bulletList[indx2].fasterDuration = curBulletList[indx2].fasterDuration;
 			}
 
-			weaponActiveList[indx] = player.weaponList[indx].isActive;
+			weaponActiveList[indx].isActive = player.weaponList[indx].isActive;
 		}
 
 		using (StreamWriter file = File.CreateText(bulletPath)) {
@@ -87,6 +91,25 @@ public class PlayerWeaponJson : JsonManager
 		}
 
 		using (StreamWriter file = File.CreateText(weaponPath)) {
+			JsonSerializer serializer = new JsonSerializer();
+			serializer.Serialize(file, weaponActiveList);
+		}
+	}
+	public override void OverwriteSave()
+	{
+		//Get the objects from the original file 
+		bulletList = JsonConvert.DeserializeObject<List<Bullet>>(Resources.Load<TextAsset>(shortPath + bulletName + "Start").ToString());
+		weaponActiveList = JsonConvert.DeserializeObject<List<Active>>(Resources.Load<TextAsset>(shortPath + weaponName + "Start").ToString());
+
+		//Then write it to the current save file
+		using (StreamWriter file = File.CreateText(bulletPath))
+		{
+			JsonSerializer serializer = new JsonSerializer();
+			serializer.Serialize(file, bulletList);
+		}
+
+		using (StreamWriter file = File.CreateText(weaponPath))
+		{
 			JsonSerializer serializer = new JsonSerializer();
 			serializer.Serialize(file, weaponActiveList);
 		}
@@ -116,8 +139,6 @@ public class PlayerWeaponJson : JsonManager
 		public float fasterMax = -1;
 		public float fasterDuration = -1;
 
-		public Transform bullet;
-
 		[Newtonsoft.Json.JsonConstructor]
 		public Bullet(float _fireRate, int _bulletPerWave, float _waitDuringWave,
 				float _waitAfterWave, int _numberOfWave, int _bulletBeforeWait,
@@ -143,6 +164,9 @@ public class PlayerWeaponJson : JsonManager
 			fasterDuration = _fasterDuration;
 		}
 	}
-
+	public class Active
+	{
+		public bool isActive;
+	}
 }
 

@@ -27,14 +27,14 @@ public class Weapon : MonoBehaviour {
         public float waitAfterWave = 0.5f;
         public int numberOfWave = 1;
         public int bulletBeforeWait = -1;
-		public bool canBeUsed = true;
         [Header("Bullet relating info")]
         public float bulletSpeed = -1;
         public float damage = 10;
         public float rageCost = 10;
         public float rageReward = -1;
         public float lifeTime = -1;
-        [Header("Additional damage")]
+		public bool canBeUsed = true;
+		[Header("Additional damage")]
         public float aoeRadius = 0;
         public float aoePercentage = 0;
         [Header("Speed stuff")]
