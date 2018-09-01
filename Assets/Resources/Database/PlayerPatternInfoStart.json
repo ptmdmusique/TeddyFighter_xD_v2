@@ -1,0 +1,14 @@
+[
+  {    
+    "startAngle": 0,
+    "endAngle": 360
+  },
+  {
+    "startAngle": 120,
+      "endAngle": 60
+  },
+  {
+    "startAngle": 100,
+    "endAngle": 80
+  }
+]

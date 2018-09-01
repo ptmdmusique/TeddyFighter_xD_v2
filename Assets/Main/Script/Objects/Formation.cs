@@ -72,9 +72,8 @@ public class Formation : MonoBehaviour {
 	}
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.K) == true) {
+		if (Manager.isDebugging == true && Input.GetKeyDown(KeyCode.K) == true)
 			SummonFormation(transform.position);
-		}
 	}
 	#endregion
 
@@ -144,9 +143,9 @@ public class Formation : MonoBehaviour {
 			spawnedObject.GetComponent<GeneralAI>().followFormation = true;
 
 			DoPath(spawnedObject, SetupPath(center, path));
-			//yield return new WaitForSeconds(waitBetweenSpawn);
+			yield return new WaitForSeconds(Time.deltaTime);		//Wait just a little bit, so the Awake() of the boss kicks in
 
-			float rotation = spawnedObject.eulerAngles.z;			//Get the rotation vector of the boss
+			float rotation = spawnedObject.eulerAngles.z;           //Get the rotation vector of the boss
 			Vector3 dirVector = Vector3.down;                       //This is the original translational vector that we will use to locate the spawn line (beneath the boss)
 			//We then need to rotate it to find the true vector
 			dirVector = StaticGlobal.RotateVectorByAmount_2D(rotation, dirVector) * vDistance;

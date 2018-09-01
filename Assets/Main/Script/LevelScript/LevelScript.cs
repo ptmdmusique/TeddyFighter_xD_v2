@@ -106,7 +106,6 @@ public abstract class LevelScript : MonoBehaviour {
 					case FormationPosition.Top:
 						//10% above the border
 						info.formation.SummonFormation(spawnPosition = new Vector3(Random.Range(-screenWidth, screenWidth) * minionSpawnRangeModifier, screenHeight / 2.0f * formationSpawnPositionModifier,0));
-						Debug.Log(spawnPosition);
 						break;
 					case FormationPosition.Bottom:
 						//10% bellow the border

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JsonManager: MonoBehaviour {
 	//Player
-	protected Player player;
+	public Player player;
 	protected string shortPath;
 
 	#region Default

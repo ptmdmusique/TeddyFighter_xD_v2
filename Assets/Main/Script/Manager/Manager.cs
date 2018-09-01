@@ -23,10 +23,12 @@ public class Manager : MonoBehaviour {
 	[Header("Pausing")]
 	[SerializeField] private GameObject pausePanel;
 	[SerializeField] private float oldTimeScale = 1;
-	private bool isPausing;
+	private bool canPause = true;
+	private bool isPausing = false;
 
 	//Singleton
 	private static Manager instance;
+	static public bool isDebugging = false;
 
 	//Saver
 	public List<JsonManager> myJSonManagers;
@@ -37,8 +39,7 @@ public class Manager : MonoBehaviour {
 
 	[Header("Level info")]
 	public string nextSceneName;
-
-	private Player player;
+	[SerializeField] private Player player;
 
 	#region Default
 	// Use this for initialization
@@ -50,7 +51,10 @@ public class Manager : MonoBehaviour {
 
 		instance = this;
 
-		player = StaticGlobal.GetPlayer().GetComponent<Player>();
+		if (player == null) { 
+			player = StaticGlobal.GetPlayer().GetComponent<Player>();
+		}
+		SetPlayerToJsonManager();
 	}
 	private void Update()
 	{
@@ -68,9 +72,15 @@ public class Manager : MonoBehaviour {
 	#endregion
 
 	#region Actions
+	private void SetPlayerToJsonManager()
+	{
+		foreach(JsonManager manager in myJSonManagers)
+		{
+			manager.player = player;
+		}
+	}
 	public void Save()
 	{
-		Debug.Log("Save!");
 		foreach(JsonManager saver in myJSonManagers) {
 			saver.Save();
 		}
@@ -84,7 +94,6 @@ public class Manager : MonoBehaviour {
 	}
 	public void Load()
 	{
-		Debug.Log("Loaded!");
 		foreach (JsonManager loader in myJSonManagers) {
 			loader.Load();
 		}
@@ -112,6 +121,11 @@ public class Manager : MonoBehaviour {
 	}
 	public void Pause()
 	{
+		if (canPause == false)
+		{
+			return;
+		}
+
 		//Stop all the current stuff
 		oldTimeScale = Time.timeScale;
 		Time.timeScale = 0;
@@ -131,6 +145,8 @@ public class Manager : MonoBehaviour {
 	#region Events
 	public void OnPlayerWin()
 	{
+		canPause = false;
+
 		//Set up the report panel
 		enemyKilledText.text = enemyKilled.ToString();
 
@@ -165,7 +181,4 @@ public class Manager : MonoBehaviour {
 		}		
 	}
 	#endregion
-
-
-	//TODO: Work on save and load
 }
